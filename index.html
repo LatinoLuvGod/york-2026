@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>York 2026 — Vacation Companion</title>
+  
+  <style>
+    :root {
+      --primary: #0077b6;
+      --primary-dark: #023e8a;
+      --secondary: #00b4d8;
+      --accent: #ffb703;
+      --accent-sand: #d97706;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --glass-bg: rgba(255, 255, 255, 0.92);
+      --glass-border: rgba(255, 255, 255, 0.75);
+      --glass-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+      --radius: 18px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; height: 100%; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: #023e8a;
+      background-image: 
+        linear-gradient(rgba(2, 62, 138, 0.35), rgba(15, 23, 42, 0.45)),
+        url('nubble.jpg'),
+        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80'),
+        linear-gradient(135deg, #023e8a 0%, #0077b6 50%, #0f766e 100%);
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 119, 182, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    /* Top Glass Header */
+    header {
+      height: 64px;
+      background: rgba(2, 62, 138, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; color: white; }
+    .brand { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-pill { background: rgba(255, 255, 255, 0.2); color: white; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; }
+
+    .header-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .header-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
+
+    .nav-tabs { display: flex; gap: 6px; }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; }
+    .tab-btn.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+
+    /* App Frame */
+    .app-frame {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Drawer */
+    .sidebar-left {
+      width: 280px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
+      overflow-y: auto;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex-shrink: 0;
+      transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 40;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+    }
+    .sidebar-left.collapsed { margin-left: -280px; }
+    .nav-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; padding-left: 8px; }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .nav-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .nav-item:hover { background: rgba(0, 119, 182, 0.08); color: var(--primary-dark); }
+    .nav-item.active { background: var(--primary); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3); }
+    .nav-sub { font-size: 0.72rem; opacity: 0.85; font-weight: 500; }
+
+    /* Viewport */
+    .viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 80px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* St. Maarten Glass Cards */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 26px;
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      transition: var(--transition);
+    }
+    .card:hover { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+
+    /* Home Hero Card */
+    .home-hero {
+      background: rgba(2, 62, 138, 0.90);
+      backdrop-filter: blur(16px);
+      color: white;
+      text-align: center;
+      padding: 34px 25px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .home-hero h1 { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+    .home-hero p { margin: 0; opacity: 0.95; font-size: 1.05rem; font-weight: 300; max-width: 600px; }
+
+    /* Quote Banner */
+    .quote-banner {
+      background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,249,255,0.96) 100%);
+      border-left: 6px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--primary-dark);
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(0, 119, 182, 0.08);
+    }
+
+    /* Balanced 3-Tile Grid */
+    .btn-grid-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .btn-grid-trio { grid-template-columns: 1fr; }
+    }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(0, 119, 182, 0.15);
+      border-radius: 14px;
+      padding: 22px 18px;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 10px 25px rgba(0, 119, 182, 0.2);
+      transform: translateY(-3px);
+    }
+    .option-btn h3 { margin: 0 0 6px 0; color: var(--primary-dark); font-size: 1.1rem; font-weight: 800; }
+    .option-btn p { margin: 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.45; }
+
+    /* Scrollable Date Toolbar */
+    .day-scroller-bar {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 9999px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+    .scroller-arrow-btn {
+      background: rgba(2, 62, 138, 0.08);
+      border: none;
+      color: var(--primary-dark);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .scroller-arrow-btn:hover { background: var(--primary-dark); color: white; }
+    .day-scroller-track {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px;
+      scrollbar-width: none;
+      flex: 1;
+      scroll-behavior: smooth;
+    }
+    .day-scroller-track::-webkit-scrollbar { display: none; }
+    .day-pill-btn {
+      background: white;
+      border: 1px solid rgba(0, 119, 182, 0.2);
+      padding: 7px 15px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .day-pill-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+    .day-pill-btn.active { background: var(--primary-dark); color: white; border-color: var(--primary-dark); box-shadow: 0 4px 14px rgba(2, 62, 138, 0.3); }
+
+    /* Day Spotlight Card */
+    .spotlight-card {
+      background: linear-gradient(135deg, #fefce8 0%, #fef08a 100%);
+      border-left: 6px solid var(--accent);
+      padding: 18px 22px;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .spotlight-title { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--accent-sand); }
+    .spotlight-text { font-size: 1.12rem; font-weight: 800; color: var(--text-dark); }
+    .spotlight-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .spotlight-chip { background: white; border: 1px solid #fde047; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
+    /* Pinned Items Drawer inside Spotlight */
+    .pinned-spotlight-box {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(217, 119, 6, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pinned-item-row {
+      background: white;
+      border: 1px solid #86efac;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .metric-cell {
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: 1px solid;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+    .metric-kicker { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .metric-val { font-size: 0.92rem; font-weight: 800; }
+
+    .badge-pill { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; padding: 5px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 5px; }
+    .badge-prime { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .badge-good { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-mod { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-depart { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    /* Accordions */
+    details {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+    details[open] { border-color: var(--primary); box-shadow: 0 6px 20px rgba(0, 119, 182, 0.1); }
+    summary {
+      font-weight: 800;
+      color: var(--primary-dark);
+      cursor: pointer;
+      font-size: 1.02rem;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    summary:hover { color: var(--primary); }
+    .details-content { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #cbd5e1; }
+
+    /* Schedule Stack */
+    .schedule-stack { display: flex; flex-direction: column; gap: 8px; }
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 130px 1fr auto;
+      gap: 14px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      align-items: center;
+    }
+    .slot-pill { font-size: 0.74rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; }
+    .slot-morning { background: #fef3c7; color: #b45309; }
+    .slot-afternoon { background: #e0f2fe; color: #0369a1; }
+    .slot-evening { background: #ede9fe; color: #6d28d9; }
+
+    /* CYOA Activity Items */
+    .act-list { display: flex; flex-direction: column; gap: 8px; }
+    .act-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .act-left { display: flex; flex-direction: column; gap: 2px; }
+    .act-name { font-weight: 800; color: var(--primary-dark); cursor: pointer; }
+    .act-name:hover { color: var(--primary); text-decoration: underline; }
+    
+    .btn-sm {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: var(--text-dark);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-sm:hover { background: #e2e8f0; transform: translateY(-1px); }
+    .btn-sm.pinned { background: var(--accent); color: var(--text-dark); border-color: var(--accent); }
+
+    /* Dining Grid */
+    .dining-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .dining-box {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+    }
+    .dining-box strong { color: var(--accent-sand); font-size: 0.74rem; text-transform: uppercase; }
+    .dining-select {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: var(--text-dark);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Subpage Header with Return Link */
+    .subpage-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 119, 182, 0.2);
+      color: var(--primary-dark);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .back-btn:hover { background: white; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* Modal / Drawer */
+    .modal-drawer {
+      position: fixed;
+      top: 0;
+      right: -600px;
+      width: 520px;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-left: 3px solid var(--primary);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
+      transition: right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 200;
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-drawer.open { right: 0; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--primary-dark); }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; }
+    .modal-close:hover { color: var(--accent-rose); }
+    .modal-body { font-size: 0.86rem; line-height: 1.6; color: var(--text-main); }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 199;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .check-item { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; padding: 4px 0; }
+    .check-item input { accent-color: var(--primary); cursor: pointer; }
+    .check-item.done { text-decoration: line-through; opacity: 0.55; }
+    .dir-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .dir-table th { text-align: left; padding: 10px; border-bottom: 2px solid #e2e8f0; font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); }
+    .dir-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; }
+    .dir-table tr:hover { background: #f8fafc; }
+
+    .view-transition {
+      animation: viewSlideFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes viewSlideFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <button class="header-btn" onclick="toggleSidebar()">
+        <span>📅 Dates Menu</span>
+      </button>
+      <div class="brand-wrap" onclick="showHub()">
+        <span class="brand">🌊 York 2026</span>
+        <span class="brand-pill">York Getaway</span>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tab-hub" onclick="showHub()">🏡 Trip Home</button>
+      <button class="tab-btn" id="tab-day" onclick="showDayView()">📅 Daily Guide</button>
+      <button class="tab-btn" id="tab-dining" onclick="showDiningDirectory()">🍽️ Dining</button>
+      <button class="tab-btn" id="tab-act" onclick="showActivityDirectory()">🎯 Activities</button>
+      <button class="tab-btn" onclick="openProvisioningModal()">🛒 Provisions</button>
+    </div>
+  </header>
+
+  <div class="app-frame">
+
+    <!-- Collapsible Left Drawer -->
+    <aside class="sidebar-left collapsed" id="sidebar-left">
+      <div>
+        <div class="nav-label">Trip Dates & Anchors</div>
+        <ul class="nav-list" id="itinerary-nav"></ul>
+      </div>
+
+      <div>
+        <div class="nav-label">Master Directories</div>
+        <ul class="nav-list">
+          <li class="nav-item" onclick="showDiningDirectory()"><span>🍽️ Dining Directory</span></li>
+          <li class="nav-item" onclick="showActivityDirectory()"><span>🎯 Activity Directory</span></li>
+          <li class="nav-item" onclick="openProvisioningModal()"><span>🛒 Cottage Provisions</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="nav-label">Modules</div>
+        <ul class="nav-list" id="modules-nav"></ul>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <div class="viewport" id="viewport-scroll">
+      <main class="container view-transition" id="main-canvas"></main>
+    </div>
+
+  </div>
+
+  <!-- Slide-Over Modal Drawer -->
+  <div class="modal-backdrop" id="modal-backdrop" onclick="closeModal()"></div>
+  <div class="modal-drawer" id="modal-drawer">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Details</div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+
+  <script>
+    /* MASTER PROVISIONING LIST */
+    const PROVISIONING_DATA = {
+      "Breakfast Staples": [
+        "Pancakes, Eggs & Sausage",
+        "Overnight Oats",
+        "Bagels & Lox",
+        "Crispy Feta Fried Eggs (Feta, Eggs, Chili Crunch)",
+        "Pesto Egg Sandwiches (Pesto, English Muffins, Provolone)",
+        "Coffee & Cold Brew",
+        "Milk & Cereal"
+      ],
+      "Beach Lunch & Cold Cuts": [
+        "Egg Salad, Tuna Salad & Chicken Salad",
+        "Bread (Dave’s Killer Bread)",
+        "Wraps (Spinach Wraps & Small Wraps)",
+        "Deli Meat & Cheese Rollups",
+        "Provolone & Cheddar Slices",
+        "Potato Chips & Pretzels",
+        "Bowtie Pasta, Grape Tomatoes, Spinach & Red Onion (Pasta Salad)",
+        "Thousand Island & Ranch Dressing, Squeeze Mayo, Lemon Juice"
+      ],
+      "Cottage Dinners & Grill Staples": [
+        "Jumbo Shrimp Kabobs (1½ lb jumbo shrimp, peeled/deveined/tails on)",
+        "Mild Jerk Sauce, Mango Chutney & Soy Sauce",
+        "Vinegar-based BBQ Sauce & Skewers",
+        "1 Large Mango, 3 Scallions & Fresh Cilantro",
+        "Ground Beef for Pizza Burgers (Garlic Powder, Italian Seasoning)",
+        "Hamburger Buns (4), Pizza Sauce, Mozzarella & Pepperoni",
+        "Ground Beef (Burgers, Cheddar, Bacon, Red Onion, Sesame Seeds)",
+        "Frozen Tater Tots",
+        "Frozen Pizzas & Velveeta Shells & Cheese (Backup)"
+      ],
+      "Snacks & Beach Drinks": [
+        "Trail Mix & Mixed Nuts",
+        "Granola & Protein Bars",
+        "Popcorn & Chips",
+        "Beer, Hard Seltzers & Wine",
+        "Beach Cooler Ice Bags"
+      ]
+    };
+
+    const DINING_PROFILES = {
+      "sun_surf": { name: "Sun and Surf / Surf and Sand", category: "Casual Lunch", timing: "Arrival Day lunch (~12:00–1:00 PM)", status: "Walk-in basis", address: "264 Long Beach Ave, York, ME", phone: "(207) 363-2961", mapsUrl: "https://maps.app.goo.gl/9r9fRk9wG8wZq2vU7", notes: "Overlooks Long Sands. Great arrival tradition lunch spot." },
+      "sand_dollar": { name: "The Sand Dollar Bar & Grille", category: "Casual Lunch", timing: "Downtown York Beach shopping lunch", status: "Walk-in", address: "2 Beach St, York Beach, ME", phone: "(207) 363-5000", mapsUrl: "https://maps.google.com/?q=The+Sand+Dollar+York+Beach+ME", notes: "Central downtown location across from Short Sands beach park." },
+      "goldenrod": { name: "The Goldenrod", category: "Classic Diner & Taffy", timing: "Paired with Water Country or beach afternoon", status: "Walk-in", address: "2 Railroad Ave, York Beach, ME", phone: "(207) 363-2621", mapsUrl: "https://maps.google.com/?q=The+Goldenrod+York+Beach+ME", notes: "Famous Goldenrod kisses taffy-pulling window and classic diner menu." },
+      "treehouse": { name: "Treehouse Taqueria", category: "Mexican / Casual Dinner", timing: "Ogunquit day early dinner (~3:30–4:00 PM)", status: "Walk-in", address: "237 Shore Rd, Ogunquit, ME", phone: "(207) 646-0440", mapsUrl: "https://maps.app.goo.gl/Vp8p3s3W2p4YvP4r7", notes: "Open-air second floor deck overlooking Perkins Cove." },
+      "omelette_factory": { name: "The Omelette Factory", category: "Classic Breakfast", timing: "Operating hours 7:00 AM – 1:00 PM", status: "Walk-in", address: "422 Main St, Ogunquit, ME", phone: "(207) 646-4110", mapsUrl: "https://maps.app.goo.gl/wJk8z9jBv9Q2YVpE8", notes: "High-protein breakfast spot anchored for Ogunquit Day kickoff." },
+      "union_bluff": { name: "Union Bluff Grill & Dining Room", category: "Upscale Waterfront", timing: "Evening dinner overlooking Short Sands", status: "⚠️ RESERVATION REQUIRED", address: "8 Beach St, York Beach, ME", phone: "(207) 363-1333", mapsUrl: "https://maps.google.com/?q=Union+Bluff+Grill+York+Beach", notes: "Waterfront patio and indoor dining room overlooking Short Sands." },
+      "lobster_cove": { name: "Lobster Cove Restaurant", category: "Coastal Seafood", timing: "Evening dinner on Shore Road", status: "⚠️ RESERVATION REQUIRED", address: "756 York St, York Harbor, ME", phone: "(207) 351-1100", mapsUrl: "https://maps.google.com/?q=Lobster+Cove+York+ME", notes: "Oceanfront dining room with rugged rocky shoreline views." },
+      "foxs_lobster": { name: "Fox’s Lobster House", category: "Classic Lobster Shack", timing: "Evening dinner near Neddick Light", status: "Walk-in", address: "8 Sohier Park Rd, York, ME", phone: "(207) 363-2643", mapsUrl: "https://maps.google.com/?q=Foxs+Lobster+House+York+ME", notes: "Located directly adjacent to Nubble Lighthouse. Outdoor patio & ice cream." }
+    };
+
+    const ACTIVITY_PROFILES = {
+      "short_sands": { name: "Short Sands Beach", location: "York Beach, ME", category: "beach", timing: "Best with low tide", status: "Public", mapsUrl: "https://maps.google.com/?q=Short+Sands+Beach+York+ME", notes: "Walking distance to shops, arcade, restrooms, and playground." },
+      "long_sands": { name: "Long Sands Beach", location: "Long Beach Ave, York, ME", category: "beach", timing: "Requires low tide for sand", status: "Metered", mapsUrl: "https://maps.google.com/?q=Long+Sands+Beach+York+ME", notes: "1.5-mile long stretch. Great for surfing, walking, and large setups." },
+      "wiggly_bridge": { name: "Fisherman’s Walk & Wiggly Bridge", location: "21 Clark’s Lane, York, ME", category: "walks", timing: "0.8-mi roundtrip", status: "Free Trail", mapsUrl: "https://maps.app.goo.gl/X9d3uT4Vj9g5D7pS9", notes: "Heavily shaded woodland canopy crossing the historic wooden suspension bridge." },
+      "marginal_way": { name: "Marginal Way Cliff Walk", location: "Ogunquit, ME", category: "walks", timing: "Walk in morning to avoid heat", status: "Free Path", mapsUrl: "https://maps.google.com/?q=Marginal+Way+Ogunquit+ME", notes: "1.25-mile paved ocean cliff walk from Perkins Cove to Ogunquit Beach." },
+      "water_country": { name: "Water Country", location: "Portsmouth, NH", category: "excursions", timing: "10:00 AM – 5:00 PM (~15m drive)", status: "⚠️ Tickets & Cabana Req", mapsUrl: "https://maps.app.goo.gl/D1t2k9H8V2e5qW3A7", notes: "Reserve shaded cabana ($119/day) in advance for cool basecamp." },
+      "take_flight": { name: "Take Flight Aerial Adventure", location: "Kittery, ME", category: "excursions", timing: "Target 10:00 AM reservation", status: "⚠️ Reservation Req", mapsUrl: "https://maps.app.goo.gl/gQ5r7P1K3eW8m2b1A", notes: "Multi-level ropes course and zip line tour. Closed-toe shoes mandatory." },
+      "cider_hill": { name: "Cider Hill Farm", location: "Amesbury, MA", category: "excursions", timing: "8:00 AM – 5:00 PM (~25m drive)", status: "Open / PYO", mapsUrl: "https://maps.app.goo.gl/5r8z7Q8y7p4m1B8t6", notes: "Award-winning cider donuts, farm store, flowers, and fruit picking." },
+      "flagship_wells": { name: "Flagship Premium Cinemas", location: "Wells, ME", category: "indoor", timing: "~15m drive North on Route 1", status: "Open", mapsUrl: "https://maps.google.com/?q=Flagship+Cinemas+Wells+ME", notes: "Best choice for standard wide releases (e.g., The Odyssey)." },
+      "regal_fox_run": { name: "Regal Fox Run & RPX", location: "Newington/Portsmouth, NH", category: "indoor", timing: "~15m drive South", status: "SIX Live! Venue", mapsUrl: "https://maps.google.com/?q=Regal+Fox+Run+Newington+NH", notes: "Only nearby cinema carrying SIX: The Musical Live! theatrical release." }
+    };
+
+    const MODULES = {
+      wiggly: { title: "🌲 Fisherman's Walk & Wiggly Bridge Loop", content: `<p><strong>Location:</strong> 21 Clark’s Lane, York, ME</p><p style="margin-top:10px;">Flat, shaded woodland boardwalk path (0.8-mi loop).</p>` },
+      ogunquit: { title: "🌊 Ogunquit & Marginal Way Excursion", content: `<p><strong>Morning Anchor:</strong> Breakfast at The Omelette Factory (7:00 AM) • Marginal Way • Treehouse Taqueria (~3:30 PM).</p>` },
+      takeflight: { title: "🧗 Take Flight Aerial Adventure", content: `<p><strong>Location:</strong> 506 US-1, Kittery, ME (~12m drive South) • 10:00 AM Reservation.</p>` },
+      watercountry: { title: "🎢 Water Country Day Plan", content: `<p><strong>Hours:</strong> 10:00 AM – 5:00 PM (Portsmouth, NH) • Cabana rental reserved.</p>` },
+      cinemas: { title: "🍿 Cinema Matrix", content: `<p><strong>Wells Flagship:</strong> Standard releases • <strong>Regal Fox Run:</strong> <em>SIX Live!</em> theatrical release venue.</p>` }
+    };
+
+    /* TRIP DAYS */
+    const TRIP_DAYS = [
+      {
+        id: "2026-08-17",
+        label: "Mon Aug 17",
+        title: "Monday, August 17 — Arrival Day",
+        quote: "“The smell of salt air and pine needles means vacation has officially begun.”",
+        highlightLead: "🏡 Settle Into Basecamp & Kick Off with Sun & Surf Lunch",
+        highlightPills: ["🚗 8:00 AM Melrose Departure", "🥪 12:00 PM Sun & Surf Lunch", "📦 Unpack & Settle In"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Scheduled Plan & Activities",
+        tag: "Arrival",
+        gauge: "MODERATE",
+        gaugeClass: "badge-mod",
+        weatherType: "rain",
+        weather: "🌧️ 68° / 64° (75% Rain)",
+        uvLevel: "mod",
+        uvIndex: "UV 3 (Moderate)",
+        lowTide: "9:13 AM (0.1')",
+        highTide: "3:15 PM (9.4')",
+        sandWindow: "Arrival & Unpack Focus",
+        schedule: { morning: "8:00 AM departure • Unpack", afternoon: "12:00 PM Sun & Surf • Groceries", evening: "Unpack" },
+        defaultDining: { breakfast: "Home Prep (Melrose)", lunch: "Sun and Surf / Surf and Sand", dinner: "Cottage Staples" },
+        cyoa: [
+          { name: "Arrival Basecamp", desc: "Settle into cottage and unpack groceries/supplies", category: "cottage", drive: "0m (Base)", shade: "Indoor", profileKey: null },
+          { name: "Regal Fox Run (SIX Live!)", desc: "Regal Fox Run in Newington (~15 min drive • Prime rain option)", category: "indoor", drive: "~15m South", shade: "A/C Indoor", profileKey: "regal_fox_run" },
+          { name: "Cottage Activities", desc: "Relaxed indoor movie night, board games & unpacking", category: "cottage", drive: "0m (Base)", shade: "Indoor", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-18",
+        label: "Tue Aug 18",
+        title: "Tuesday, August 18",
+        quote: "“High tides and good vibes on Short Sands.”",
+        highlightLead: "🏖️ Morning Beach Setup & Evening M&M Drinks Out",
+        highlightPills: ["🏖️ 8:30 AM – 12:30 PM Sand Window", "💼 Matthew Morning Work Block", "🍹 Evening M&M Cocktails"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Short Sands",
+        gauge: "GOOD",
+        gaugeClass: "badge-good",
+        weatherType: "crisp",
+        weather: "⛅ 77° / 61° (15% Rain)",
+        uvLevel: "high",
+        uvIndex: "UV 7 (High)",
+        lowTide: "9:59 AM (0.7')",
+        highTide: "4:03 PM (9.1')",
+        sandWindow: "8:30 AM – 12:30 PM (Short Sands)",
+        schedule: { morning: "Michael & Maya Beach • Matthew Work Block", afternoon: "— Open / Flexible —", evening: "M&M Drinks Out" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Short Sands Beach", desc: "Setup window 8:30 AM – 12:30 PM (peaks near 9:59 AM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi flat, shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM • ~15 min drive)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM • Farm store, bakery & picking)", category: "excursions", drive: "~25m South", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Cinema Matinee", desc: "Wells Flagship (wide releases) or Regal Fox Run (SIX Live!)", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
+          { name: "Cottage Activities", desc: "Board games, reading, puzzles, and porch relaxation", category: "cottage", drive: "0m (Base)", shade: "Porch Canopy", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-19",
+        label: "Wed Aug 19",
+        title: "Wednesday, August 19",
+        quote: "“Every wave brings a fresh start.”",
+        highlightLead: "🏖️ Mid-Morning Sand Expanse & Matthew Departs Home",
+        highlightPills: ["🧘 Michael Therapy / Nutrition", "🏖️ 9:00 AM – 1:30 PM Beach Expanse", "🚗 Matthew Evening Departure"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Short Sands",
+        gauge: "GOOD",
+        gaugeClass: "badge-good",
+        weatherType: "crisp",
+        weather: "⛅ 77° / 63° (15% Rain)",
+        uvLevel: "high",
+        uvIndex: "UV 7 (High)",
+        lowTide: "10:48 AM (1.2')",
+        highTide: "4:53 PM (8.8')",
+        sandWindow: "9:00 AM – 1:30 PM (Short Sands)",
+        schedule: { morning: "Michael Therapy • Matthew & Maya Beach", afternoon: "— Open / Flexible —", evening: "MATTHEW LEAVES FOR HOME" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Short Sands Beach", desc: "Setup window 9:00 AM – 1:30 PM (peaks near 10:48 AM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi flat, shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM • ~15 min drive)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m South", shade: "Partial Shade", profileKey: "cider_hill" },
+          { name: "Backup OGT Day", desc: "Alternate weather contingency for Ogunquit day trip", category: "excursions", drive: "~15m North", shade: "Excursion", profileKey: null },
+          { name: "Cottage Activities", desc: "Board games, puzzles, lawn games, or relaxing at home", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-20",
+        label: "Thu Aug 20",
+        title: "Thursday, August 20 — MATTHEW AT HOME",
+        quote: "“Even on workdays, the coast is calling.”",
+        highlightLead: "💼 Matthew Working in Melrose • Michael & Maya Explore York",
+        highlightPills: ["💼 Matthew Work Day", "🏖️ Late Morning Beach Window", "🏡 Matthew Returns Tonight"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure (Michael & Maya)",
+        tag: "Home/Work",
+        gauge: "GOOD",
+        gaugeClass: "badge-good",
+        weatherType: "warm",
+        weather: "🌦️ 82° / 59° (Warmest PM)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        lowTide: "11:40 AM (1.7')",
+        highTide: "5:47 PM (8.5')",
+        sandWindow: "10:00 AM – 2:30 PM (Short Sands)",
+        schedule: { morning: "Matthew at work (Melrose)", afternoon: "Matthew at work (Melrose)", evening: "Matthew returns to York" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Short Sands Beach", desc: "Setup window 10:00 AM – 2:30 PM (peaks near 11:40 AM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
+          { name: "Downtown York Beach", desc: "Window shopping, Fun-O-Rama arcade & sweets", category: "cottage", drive: "Walk", shade: "Shops/Arcade", profileKey: null },
+          { name: "Car Excursion", desc: "Drive to Cider Hill Farm or area farm stands", category: "excursions", drive: "~25m", shade: "Car A/C", profileKey: "cider_hill" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM • Midday heat option)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cinema Matinee", desc: "Matinee at Regal Fox Run (SIX Live!) or Flagship Wells", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "regal_fox_run" },
+          { name: "Cottage Activities", desc: "Home activities (board games, movies, puzzles)", category: "cottage", drive: "0m", shade: "Indoor", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-21",
+        label: "Fri Aug 21",
+        title: "Friday, August 21 — Matthew at TP",
+        quote: "“Find me where the green meets the ocean breeze.”",
+        highlightLead: "🏌️ Matthew Solo Day Pass at TP • Long Sands Low Tide",
+        highlightPills: ["🏌️ Matthew Solo Day Pass", "🏖️ 11:00 AM – 3:30 PM Midday Sand", "🥧 Cider Hill Farm Option"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure (Michael & Maya)",
+        tag: "Twin Ponds",
+        gauge: "VERY GOOD",
+        gaugeClass: "badge-prime",
+        weatherType: "crisp",
+        weather: "☀️ 76° / 58° (Sunny & Crisp)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        lowTide: "12:32 PM (1.3')",
+        highTide: "6:44 PM (8.3')",
+        sandWindow: "11:00 AM – 3:30 PM (Long Sands)",
+        schedule: { morning: "Matthew at TP", afternoon: "Matthew at TP", evening: "Matthew at TP" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Long Sands Beach", desc: "Setup window 11:00 AM – 3:30 PM (peaks near 12:32 PM low tide)", category: "beach", drive: "~3m South", shade: "Full Sun", profileKey: "long_sands" },
+          { name: "Farm & Orchard", desc: "Drive to Cider Hill Farm (Amesbury) or Berry Best Farm (Lebanon)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Downtown Activities", desc: "Stroll downtown York Beach, arcade & shops", category: "cottage", drive: "Walk", shade: "Shops", profileKey: null },
+          { name: "Cinema", desc: "Wells Flagship or Regal Fox Run (SIX Live!)", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
+          { name: "Cottage Activities", desc: "Home activities (games, movies, puzzles)", category: "cottage", drive: "0m", shade: "Indoor", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-22",
+        label: "Sat Aug 22",
+        title: "Saturday, August 22 — Laura’s House Visit",
+        quote: "“Good food, great family, and sandy feet.”",
+        highlightLead: "🏠 Family Gathering & Lunch at Laura’s House (1:00 PM)",
+        highlightPills: ["🌿 Shaded Morning Walk", "🥪 1:00 PM Laura's Lunch!", "🏖️ Late Afternoon Sand"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Scheduled Activities & Day Route",
+        tag: "Laura’s",
+        gauge: "VERY GOOD",
+        gaugeClass: "badge-prime",
+        weatherType: "crisp",
+        weather: "☀️ 78° / 60° (Sunny)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        lowTide: "1:26 PM (1.8')",
+        highTide: "7:42 PM (8.3')",
+        sandWindow: "11:30 AM – 4:00 PM (Short Sands)",
+        schedule: { morning: "— Open / Flexible —", afternoon: "1:00 PM Laura’s House!", evening: "— Open / Flexible —" },
+        defaultDining: { breakfast: "", lunch: "Laura's House Visit", dinner: "" },
+        cyoa: [
+          { name: "Family Anchor", desc: "1:00 PM Lunch at Laura’s House", category: "cottage", drive: "Local", shade: "Family Lunch", profileKey: null },
+          { name: "Short Sands Beach", desc: "Setup window 11:30 AM – 4:00 PM (peaks near 1:26 PM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (flat, shaded morning walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Cottage Activities", desc: "Relaxed evening games, puzzles, or porch reading", category: "cottage", drive: "0m", shade: "Porch", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-23",
+        label: "Sun Aug 23",
+        title: "Sunday, August 23",
+        quote: "“Sunday on the coast moves just a little slower.”",
+        highlightLead: "🏖️ Prime Sunday Afternoon Expanse on Long Sands",
+        highlightPills: ["🏖️ 12:30 PM – 5:00 PM Long Sands", "🌲 Wiggly Bridge Shaded Loop", "🌊 2:22 PM Low Tide"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Long Sands",
+        gauge: "VERY GOOD",
+        gaugeClass: "badge-prime",
+        weatherType: "warm",
+        weather: "☀️ 80° / 62° (Sunny & Warm)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        lowTide: "2:22 PM (2.0')",
+        highTide: "8:40 PM (8.4')",
+        sandWindow: "12:30 PM – 5:00 PM (Long Sands)",
+        schedule: { morning: "— Open / Flexible —", afternoon: "— Open / Flexible —", evening: "— Open / Flexible —" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Long Sands Beach", desc: "Setup window 12:30 PM – 5:00 PM (peaks near 2:22 PM low tide)", category: "beach", drive: "~3m South", shade: "Full Sun", profileKey: "long_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cinema Encore", desc: "Event cinema encore matinee (SIX Live! at Regal Fox Run) or Wells Flagship", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "regal_fox_run" },
+          { name: "Cottage Activities", desc: "Board games, puzzles, and cottage relaxation", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-24",
+        label: "Mon Aug 24",
+        title: "Monday, August 24",
+        quote: "“Breathe in the salt, breathe out the stress.”",
+        highlightLead: "🏖️ Mid-Afternoon Beach Setup & Movie Night Options",
+        highlightPills: ["🏖️ 1:30 PM – 5:30 PM Receding Tide", "🍿 Cinema Matrix: The Odyssey", "🌲 Low-Heat Trail Option"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Short Sands",
+        gauge: "GOOD",
+        gaugeClass: "badge-good",
+        weatherType: "warm",
+        weather: "☀️ 81° / 63° (Mostly Sunny)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        wind: "9 mph W",
+        lowTide: "3:17 PM (2.0')",
+        highTide: "9:36 PM (8.6')",
+        sandWindow: "1:30 PM – 5:30 PM (Short Sands)",
+        schedule: { morning: "— Open / Flexible —", afternoon: "— Open / Flexible —", evening: "— Open / Flexible —" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Short Sands Beach", desc: "Setup window 1:30 PM – 5:30 PM (peaks near 3:17 PM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (shaded morning walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Cinema", desc: "Wells Flagship (The Odyssey) or Regal Fox Run", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
+          { name: "Cottage Activities", desc: "Board games, reading, and puzzles", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-25",
+        label: "Tue Aug 25",
+        title: "Tuesday, August 25 — OGT Day",
+        quote: "“Cliffs, tacos, and saltwater taffy — the perfect Ogunquit day.”",
+        highlightLead: "🎯 Locked Ogunquit Day Excursion & Treehouse Taqueria Dinner",
+        highlightPills: ["🥞 7:00 AM Omelette Factory", "🌊 Marginal Way Cliff Walk", "🌮 ~3:30 PM Treehouse Taqueria"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Ogunquit Excursion & Activities",
+        tag: "OGT Day",
+        gauge: "VERY GOOD / EXCURSION",
+        gaugeClass: "badge-prime",
+        weatherType: "warm",
+        weather: "☀️ 82° / 64° (Sunny & Warm)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        wind: "8 mph SW",
+        lowTide: "4:10 PM (1.7')",
+        highTide: "10:20 AM (8.0')",
+        sandWindow: "2:30 PM – 6:30 PM (Long Sands)",
+        schedule: { morning: "Omelette Factory • Mini-Golf • Marginal Way • Shopping", afternoon: "Treehouse Taqueria (~3:30–4:00 PM)", evening: "Optional late afternoon sand setup" },
+        defaultDining: { breakfast: "The Omelette Factory", lunch: "", dinner: "Treehouse Taqueria" },
+        cyoa: [
+          { name: "The Omelette Factory", desc: "Breakfast anchor (Opens 7:00 AM at 422 Main St)", category: "excursions", drive: "~15m North", shade: "Indoor", profileKey: "omelette_factory" },
+          { name: "Wonder Mountain Fun Park", desc: "Opens 9:30 AM (270 Post Rd, Moody • Mini-golf & arcade)", category: "excursions", drive: "~18m North", shade: "Partial Sun", profileKey: null },
+          { name: "Marginal Way Cliff Walk", desc: "1.25-mile paved cliff walk (Must walk morning to beat heat)", category: "walks", drive: "~15m North", shade: "Zero Shade", profileKey: "marginal_way" },
+          { name: "Downtown Ogunquit Shopping", desc: "Perkins Cove window shopping & confectionery stands", category: "excursions", drive: "~15m North", shade: "Shops", profileKey: null },
+          { name: "Treehouse Taqueria", desc: "Early dinner (~3:30–4:00 PM walk-in on open deck)", category: "excursions", drive: "~15m North", shade: "Deck Canopy", profileKey: "treehouse" },
+          { name: "Long Sands Beach", desc: "Late beach setup (3:00 PM – 7:30 PM • Prime low tide expanse)", category: "beach", drive: "~3m South", shade: "Sunset Sand", profileKey: "long_sands" }
+        ]
+      },
+      {
+        id: "2026-08-26",
+        label: "Wed Aug 26",
+        title: "Wednesday, August 26",
+        quote: "“A table for two and sunset over the water.”",
+        highlightLead: "💼 Work & Therapy Morning • Michael & Matthew Date Night",
+        highlightPills: ["💼 Morning Work & Therapy", "🏖️ 3:00 PM – 7:30 PM Prime Sand", "🍷 M&M Dinner Date Night"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Date Night",
+        gauge: "PRIME",
+        gaugeClass: "badge-prime",
+        weatherType: "warm",
+        weather: "☀️ 80° / 62° (Sunny)",
+        uvLevel: "very-high",
+        uvIndex: "UV 8 (Very High)",
+        wind: "7 mph NE",
+        lowTide: "5:00 PM (1.3')",
+        highTide: "11:08 AM (8.4')",
+        sandWindow: "3:00 PM – 7:30 PM (Long Sands)",
+        schedule: { morning: "Matthew Works • Maya Therapy • Michael Therapy", afternoon: "— Open / Flexible —", evening: "Michael & Matthew Dinner Date Night" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "Date Night Dinner" },
+        cyoa: [
+          { name: "Long Sands Beach", desc: "Setup window 3:00 PM – 7:30 PM (peaks near 5:00 PM low tide)", category: "beach", drive: "~3m South", shade: "Full Sun", profileKey: "long_sands" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM • 80°F sunny day)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Cinema", desc: "Flagship Wells or Regal Fox Run", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
+          { name: "Cottage Activities", desc: "Board games, reading, and porch downtime", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-27",
+        label: "Thu Aug 27",
+        title: "Thursday, August 27 — Michael at TP / Take Flight",
+        quote: "“Courage above the trees, calm on the shore.”",
+        highlightLead: "🧗 Take Flight Aerial Adventure (10 AM) & Solo Pass Swap",
+        highlightPills: ["🧗 10:00 AM Take Flight Kittery", "🏌️ Michael Twin Ponds Pass", "🏖️ 3:30 PM Golden Hour Beach"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Scheduled Day Plan & Activities",
+        tag: "Take Flight",
+        gauge: "PRIME",
+        gaugeClass: "badge-prime",
+        weatherType: "crisp",
+        weather: "☀️ 79° / 60° (Mostly Sunny)",
+        uvLevel: "high",
+        uvIndex: "UV 7 (High)",
+        wind: "8 mph E",
+        lowTide: "5:47 PM (0.8')",
+        highTide: "11:53 AM (8.8')",
+        sandWindow: "3:30 PM – 8:00 PM (Short Sands / Pre-pack)",
+        schedule: { morning: "Michael at TP • Matthew & Maya Take Flight (10 AM)", afternoon: "Michael at TP • Beach setup", evening: "Michael at TP" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Take Flight Aerial Adventure", desc: "Kittery, ME • Target 10:00 AM reservation (Matthew & Maya)", category: "excursions", drive: "~12m South", shade: "Forest Canopy", profileKey: "take_flight" },
+          { name: "Twin Ponds Solo Day", desc: "Michael full day pass swap ($35 pass)", category: "excursions", drive: "Local", shade: "Golf Course", profileKey: null },
+          { name: "Short Sands Beach", desc: "Late beach setup (3:30 PM – 8:00 PM • Low tide peak near 5:47 PM)", category: "beach", drive: "Walk / 2m", shade: "Golden Hour", profileKey: "short_sands" },
+          { name: "Cottage Activities", desc: "Initial pre-packing, games, and evening movie", category: "cottage", drive: "0m", shade: "Indoor", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-28",
+        label: "Fri Aug 28",
+        title: "Friday, August 28 — Final Beach Day",
+        quote: "“The best memories are coated in sand and sunset.”",
+        highlightLead: "🏖️ Matthew Morning Work Block & Final Prime Beach Setup Window",
+        highlightPills: ["💼 Matthew Morning Work Block", "🏖️ 4:00 PM – 8:00 PM Low Tide Setup", "📦 Begin Cottage Staging"],
+        isCYOA: true,
+        cyoaHeader: "🎯 Choose Your Own Adventure",
+        tag: "Final Beach",
+        gauge: "PRIME",
+        gaugeClass: "badge-prime",
+        weatherType: "crisp",
+        weather: "⛅ 74° / 57° (Partly Sunny & Crisp)",
+        uvLevel: "mod",
+        uvIndex: "UV 6 (Moderate)",
+        wind: "10 mph NW",
+        lowTide: "6:03 AM (0.1') / 6:11 PM (0.5')",
+        highTide: "12:02 PM (8.7')",
+        sandWindow: "4:00 PM – 8:00 PM (Long Sands)",
+        schedule: { morning: "Matthew Work Block", afternoon: "— Open / Flexible —", evening: "Final Cottage Dinner & Farewell" },
+        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        cyoa: [
+          { name: "Long Sands Beach", desc: "Final full beach window (4:00 PM – 8:00 PM • Peak low tide 6:11 PM)", category: "beach", drive: "~3m South", shade: "Sunset Sand", profileKey: "long_sands" },
+          { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
+          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
+          { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
+          { name: "Cinema", desc: "Flagship Wells or Regal Fox Run", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
+          { name: "Cottage Activities", desc: "Cottage pre-pack, porch relaxation, and farewell dinner prep", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+        ]
+      },
+      {
+        id: "2026-08-29",
+        label: "Sat Aug 29",
+        title: "Saturday, August 29 — Departure Day",
+        quote: "“Don’t cry because it’s over, smile because you’re already planning next year.”",
+        highlightLead: "🚗 Cottage Check-Out & Portsmouth Waterfront Stopover",
+        highlightPills: ["📦 Morning Pack & Check-Out", "🦀 Portsmouth Waterfront Lunch", "🏠 Return Home to Melrose"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Departure Plan & Activities",
+        tag: "Departure",
+        gauge: "DEPARTURE",
+        gaugeClass: "badge-depart",
+        weatherType: "crisp",
+        weather: "☀️ 76° / 58° (Mostly Sunny)",
+        uvLevel: "high",
+        uvIndex: "UV 7 (High)",
+        lowTide: "6:40 AM (-0.0') / 6:53 PM (0.3')",
+        highTide: "12:18 AM (9.5') / 12:43 PM (9.0')",
+        sandWindow: "Pack, Check-out & Depart",
+        schedule: { morning: "Pack Car & Cottage Check-Out", afternoon: "Portsmouth Afternoon Stopover", evening: "Return home to Melrose" },
+        defaultDining: { breakfast: "Cottage Cleanup", lunch: "Downtown Portsmouth", dinner: "Home Prep (Melrose)" },
+        cyoa: [
+          { name: "Departure Anchor", desc: "Check out of cottage & pack vehicle", category: "cottage", drive: "0m", shade: "Packing", profileKey: null },
+          { name: "Optional Morning Beach Walk", desc: "Quick low-tide stroll (6:40 AM – 8:00 AM)", category: "beach", drive: "Walk", shade: "Early Morning", profileKey: null },
+          { name: "Portsmouth Stopover", desc: "Market Square, waterfront dining, and downtown shops", category: "excursions", drive: "~18m South", shade: "Town Walk", profileKey: null },
+          { name: "Homeward Bound", desc: "Return drive to Melrose", category: "cottage", drive: "Return", shade: "Drive", profileKey: null }
+        ]
+      }
+    ];
+
+    let currentDayId = "2026-08-17";
+    let currentView = "hub";
+    let activeFilter = "all";
+
+    function getStoredData(key, fallback) {
+      try { const item = localStorage.getItem(key); return item ? JSON.parse(item) : fallback; } catch (e) { return fallback; }
+    }
+    function setStoredData(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    }
+
+    function init() {
+      renderNav();
+      renderModulesNav();
+      showHub();
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar-left").classList.toggle("collapsed");
+    }
+
+    function renderNav() {
+      const navList = document.getElementById("itinerary-nav");
+      navList.innerHTML = TRIP_DAYS.map(day => `
+        <li class="nav-item ${day.id === currentDayId ? 'active' : ''}" onclick="showDayView('${day.id}')">
+          <span>${day.label}</span>
+          <span class="nav-sub">${day.tag}</span>
+        </li>
+      `).join('');
+    }
+
+    function renderModulesNav() {
+      const modNav = document.getElementById("modules-nav");
+      modNav.innerHTML = Object.keys(MODULES).map(key => `
+        <li class="nav-item" onclick="openModule('${key}')">
+          <span>${MODULES[key].title.split(' ')[0]} ${MODULES[key].title.split(' ').slice(1, 3).join(' ')}</span>
+        </li>
+      `).join('');
+    }
+
+    function jumpToToday() {
+      const today = new Date().toISOString().split('T')[0];
+      const match = TRIP_DAYS.find(d => d.id === today);
+      showDayView(match ? match.id : TRIP_DAYS[0].id);
+    }
+
+    function scrollDates(offset) {
+      const track = document.getElementById("scroller-track");
+      if (track) {
+        track.scrollBy({ left: offset, behavior: 'smooth' });
+      }
+    }
+
+    function triggerViewTransition(canvas) {
+      canvas.classList.remove("view-transition");
+      void canvas.offsetWidth;
+      canvas.classList.add("view-transition");
+      document.getElementById("viewport-scroll").scrollTop = 0;
+    }
+
+    /* VIEW 1: BALANCED 3-TILE HUB HOME */
+    function showHub() {
+      currentView = "hub";
+      setActiveTab("tab-hub");
+      renderNav();
+
+      const today = new Date().toISOString().split('T')[0];
+      const match = TRIP_DAYS.find(d => d.id === today);
+      const featuredDay = match || TRIP_DAYS[0];
+
+      const tripStartDate = new Date("2026-08-17T08:00:00");
+      const now = new Date();
+      const diffDays = Math.ceil((tripStartDate - now) / (1000 * 60 * 60 * 24));
+      
+      let countdownStatus = "";
+      if (diffDays > 1) countdownStatus = `⏱️ ${diffDays} days until York!`;
+      else if (diffDays === 1) countdownStatus = `⏱️ Vacation starts tomorrow!`;
+      else if (diffDays <= 0 && diffDays >= -12) countdownStatus = `🌊 Vacation in Progress! (${featuredDay.label})`;
+      else countdownStatus = `🏖️ Vacation Countdown`;
+
+      const canvas = document.getElementById("main-canvas");
+      canvas.innerHTML = `
+        <div class="home-hero">
+          <h1>🌊 York Beach 2026</h1>
+          <p>Relaxed vacation companion for Matthew, Michael & Maya (August 17 – 29).</p>
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button class="header-btn" onclick="jumpToToday()">📍 Jump to Today (${featuredDay.label})</button>
+            <button class="header-btn" onclick="openProvisioningModal()">🛒 Provisions List</button>
+          </div>
+        </div>
+
+        <div class="quote-banner">
+          “${featuredDay.quote.replace(/[“”"]/g, '')}”
+        </div>
+
+        <div class="spotlight-card">
+          <div class="spotlight-title">✨ Spotlight Focus: ${featuredDay.label}</div>
+          <div class="spotlight-text">${featuredDay.highlightLead}</div>
+          <div class="spotlight-chips">
+            ${featuredDay.highlightPills.map(p => `
+              <div class="spotlight-chip"><span>${p}</span></div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Balanced 3-Tile Row -->
+        <div class="btn-grid-trio">
+          <button class="option-btn" onclick="showDayView('${featuredDay.id}')">
+            <h3>📅 Daily Guide & Tides</h3>
+            <p>View day-by-day schedules, low tide beach setup windows, and custom notes.</p>
+          </button>
+
+          <button class="option-btn" onclick="showDiningDirectory()">
+            <h3>🍽️ Dining & Restaurants</h3>
+            <p>Browse local seafood shacks, dinner reservations, menus, and directions.</p>
+          </button>
+
+          <button class="option-btn" onclick="showActivityDirectory()">
+            <h3>🎯 Activities & Excursions</h3>
+            <p>Explore beaches, shaded nature walks, Water Country, Take Flight, and cinemas.</p>
+          </button>
+        </div>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:20px 24px;">
+          <div>
+            <h3 style="margin:0; font-size:1.1rem; color:var(--primary-dark);">🗓️ Jump to Any Date</h3>
+            <p style="margin:0; font-size:0.85rem; color:var(--text-muted);">Quickly open any day without searching the menu</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-sm" onclick="jumpToToday()">📍 Today</button>
+            <select class="dining-select" style="font-size:0.85rem; padding:6px 12px;" onchange="showDayView(this.value)">
+              ${TRIP_DAYS.map(d => `<option value="${d.id}" ${d.id === featuredDay.id ? 'selected' : ''}>${d.label} — ${d.tag}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      `;
+      triggerViewTransition(canvas);
+    }
+
+    /* VIEW 2: DAY FOCUS VIEW */
+    function showDayView(dayId) {
+      currentView = "day";
+      setActiveTab("tab-day");
+      if (dayId) currentDayId = dayId;
+      renderNav();
+      
+      const day = TRIP_DAYS.find(d => d.id === currentDayId);
+      const canvas = document.getElementById("main-canvas");
+      const pinned = getStoredData(`pinned_${day.id}`, []);
+      const customSlots = getStoredData(`slots_${day.id}`, {});
+      const dailyNote = getStoredData(`note_${day.id}`, "");
+      const diningState = getStoredData(`dining_${day.id}`, day.defaultDining);
+
+      const diningSelectOptions = [
+        "— Open / Unplanned —",
+        ...Object.values(DINING_PROFILES).map(d => d.name),
+        "Cottage Staples",
+        "Laura's House Visit",
+        "Downtown Portsmouth",
+        "Home Prep (Melrose)",
+        "Date Night Dinner"
+      ];
+
+      // Dynamic Color Scheme Helpers
+      let weatherBg = "background:#e0f2fe; border-color:#bae6fd; color:#0369a1;";
+      if (day.weatherType === 'warm') weatherBg = "background:#fef3c7; border-color:#fde68a; color:#b45309;";
+      if (day.weatherType === 'rain') weatherBg = "background:#ede9fe; border-color:#ddd6fe; color:#6d28d9;";
+
+      let uvBg = "background:#dcfce7; border-color:#bbf7d0; color:#15803d;";
+      if (day.uvLevel === 'high') uvBg = "background:#fef3c7; border-color:#fde68a; color:#b45309;";
+      if (day.uvLevel === 'very-high') uvBg = "background:#fee2e2; border-color:#fecaca; color:#b91c1c;";
+
+      canvas.innerHTML = `
+        <!-- Floating Day Scroller Bar (Never clipped, with < > buttons) -->
+        <div class="day-scroller-bar">
+          <button class="scroller-arrow-btn" onclick="scrollDates(-220)">‹</button>
+          <button class="day-pill-btn" style="background:#023e8a; color:white;" onclick="jumpToToday()">📍 Today</button>
+          <div class="day-scroller-track" id="scroller-track">
+            ${TRIP_DAYS.map(d => `
+              <button id="pill-${d.id}" class="day-pill-btn ${d.id === currentDayId ? 'active' : ''}" onclick="showDayView('${d.id}')">
+                <span>${d.label}</span>
+              </button>
+            `).join('')}
+          </div>
+          <button class="scroller-arrow-btn" onclick="scrollDates(220)">›</button>
+        </div>
+
+        <!-- Prominent Quote Banner -->
+        <div class="quote-banner">
+          “${day.quote.replace(/[“”"]/g, '')}”
+        </div>
+
+        <!-- 1. Top Logistical Snapshot Card with Dynamic Color Styling -->
+        <div class="card" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0; border:none; padding:0; font-size:1.6rem; color:var(--primary-dark); font-weight:800;">${day.title}</h2>
+            <span class="badge-pill ${day.gaugeClass}">🏖️ ${day.gauge}</span>
+          </div>
+
+          <!-- Weather & UV Grid with Individual Colors -->
+          <div class="metrics-grid">
+            <div class="metric-cell" style="${weatherBg}">
+              <span class="metric-kicker">Forecast & Rain</span>
+              <span class="metric-val">${day.weather}</span>
+            </div>
+            <div class="metric-cell" style="${uvBg}">
+              <span class="metric-kicker">UV Exposure</span>
+              <span class="metric-val">${day.uvIndex}</span>
+            </div>
+            <div class="metric-cell" style="background:#f0fdf4; border-color:#bbf7d0; color:#15803d;">
+              <span class="metric-kicker">Low Tide Target</span>
+              <span class="metric-val">${day.lowTide}</span>
+            </div>
+            <div class="metric-cell" style="background:#f8fafc; border-color:#e2e8f0; color:#475569;">
+              <span class="metric-kicker">High Tide Basin</span>
+              <span class="metric-val">${day.highTide}</span>
+            </div>
+          </div>
+
+          <!-- Sinusoidal Tide Wave Curve with X-Axis Time Markers -->
+          <div style="background:rgba(255,255,255,0.95); border:1px solid rgba(0,119,182,0.18); border-radius:14px; padding:12px 18px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:800; color:var(--primary-dark); margin-bottom:4px;">
+              <span>🌊 Daily Tide Progression & Sand Timeline</span>
+              <span>Low Tide: <strong>${day.lowTide}</strong></span>
+            </div>
+            <svg viewBox="0 0 600 64" style="width:100%; height:64px;">
+              <defs>
+                <linearGradient id="sxmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#00b4d8" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,18 C150,44 200,44 300,8 C400,-8 450,44 600,18 L600,48 L0,48 Z" fill="url(#sxmGrad)"/>
+              <path d="M0,18 C150,44 200,44 300,8 C400,-8 450,44 600,18" fill="none" stroke="#0077b6" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="300" cy="8" r="5" fill="#ffb703" stroke="#ffffff" stroke-width="2"/>
+              <text x="312" y="12" font-size="10" font-weight="800" fill="#023e8a">Peak Sand (${day.lowTide.split(' ')[0]})</text>
+              
+              <!-- X-Axis Timeline Markers -->
+              <line x1="0" y1="48" x2="600" y2="48" stroke="#cbd5e1" stroke-width="1"/>
+              <text x="5" y="60" font-size="9" font-weight="600" fill="#64748b">6 AM</text>
+              <text x="120" y="60" font-size="9" font-weight="600" fill="#64748b">9 AM</text>
+              <text x="240" y="60" font-size="9" font-weight="600" fill="#64748b">12 PM</text>
+              <text x="360" y="60" font-size="9" font-weight="600" fill="#64748b">3 PM</text>
+              <text x="480" y="60" font-size="9" font-weight="600" fill="#64748b">6 PM</text>
+              <text x="565" y="60" font-size="9" font-weight="600" fill="#64748b">9 PM</text>
+            </svg>
+          </div>
+
+          <div style="background:#fef3c7; border:1px solid #fcd34d; border-radius:10px; padding:10px 16px; font-size:0.9rem; display:flex; justify-content:space-between; align-items:center;">
+            <div>🏖️ <strong>Peak Sand Window:</strong></div>
+            <span style="font-weight:800; color:var(--accent-sand);">${day.sandWindow}</span>
+          </div>
+        </div>
+
+        <!-- 2. "What's Happening Today" Card with Pinned Activities -->
+        <div class="spotlight-card">
+          <div class="spotlight-title">✨ What’s Happening Today</div>
+          <div class="spotlight-text">${day.highlightLead}</div>
+          <div class="spotlight-chips">
+            ${day.highlightPills.map(p => `
+              <div class="spotlight-chip"><span>${p}</span></div>
+            `).join('')}
+          </div>
+
+          <!-- Pinned Activities Workspace inside Spotlight -->
+          ${pinned.length > 0 ? `
+            <div class="pinned-spotlight-box">
+              <div style="font-size:0.74rem; font-weight:800; color:var(--accent-sand);">📌 Pinned for Today (Assign to a time slot):</div>
+              ${pinned.map(item => `
+                <div class="pinned-item-row">
+                  <span style="color:var(--primary-dark); cursor:pointer;" onclick="openProfileByName('${item.replace(/'/g, "\\'")}')">📍 ${item}</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <select class="dining-select" style="padding:2px 6px; font-size:0.72rem;" onchange="assignSlot('${day.id}', '${item.replace(/'/g, "\\'")}', this.value)">
+                      <option value="">Slot: ${getAssignedSlotName(customSlots, item)}</option>
+                      <option value="morning">Morning</option>
+                      <option value="afternoon">Afternoon</option>
+                      <option value="evening">Evening</option>
+                      <option value="clear">— Clear Slot —</option>
+                    </select>
+                    <span style="cursor:pointer; color:var(--accent-rose); font-size:1.1rem; margin-left:4px;" onclick="togglePin('${item.replace(/'/g, "\\'")}')">&times;</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 3. Details Accordion 1: Schedule & Notes (CLOSED BY DEFAULT) -->
+        <details id="acc-schedule" ontoggle="handleAccordionToggle(this)">
+          <summary>
+            <span>🕒 Schedule & Daily Focus</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tap to view timeline</span>
+          </summary>
+          <div class="details-content">
+            <div class="schedule-stack">
+              <div class="schedule-row">
+                <span class="slot-pill slot-morning">☀️ Morning</span>
+                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.morning, customSlots.morning) || '— Open / Flexible —'}</span>
+                ${customSlots.morning ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'morning')">&times;</button>` : ''}
+              </div>
+              <div class="schedule-row">
+                <span class="slot-pill slot-afternoon">⛅ Afternoon</span>
+                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.afternoon, customSlots.afternoon) || '— Open / Flexible —'}</span>
+                ${customSlots.afternoon ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'afternoon')">&times;</button>` : ''}
+              </div>
+              <div class="schedule-row">
+                <span class="slot-pill slot-evening">🌙 Evening</span>
+                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.evening, customSlots.evening) || '— Open / Flexible —'}</span>
+                ${customSlots.evening ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'evening')">&times;</button>` : ''}
+              </div>
+            </div>
+
+            <textarea class="dining-select" style="width:100%; min-height:54px; margin-top:12px; padding:10px; font-family:inherit;" placeholder="Notes for today (pack chairs, sunscreen, towels)..." oninput="saveNote('${day.id}', this.value)">${dailyNote}</textarea>
+          </div>
+        </details>
+
+        <!-- 4. Details Accordion 2: Activities & CYOA (CLOSED BY DEFAULT) -->
+        <details id="acc-cyoa" ontoggle="handleAccordionToggle(this)">
+          <summary>
+            <span>${day.cyoaHeader}</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">(${day.cyoa.length} options)</span>
+          </summary>
+          <div class="details-content">
+            <div class="act-list">
+              ${day.cyoa.map(item => {
+                const isPinned = pinned.includes(item.name);
+                return `
+                  <div class="act-row">
+                    <div class="act-left">
+                      <span class="act-name" onclick="${item.profileKey ? `openActivityProfile('${item.profileKey}')` : ''}">${item.name}</span>
+                      <span style="color:var(--text-muted); font-size:0.82rem;">${item.desc}</span>
+                      <div style="display:flex; gap:6px; font-size:0.7rem; color:var(--primary-dark); font-weight:700; margin-top:2px;">
+                        ${item.drive ? `<span>📍 ${item.drive}</span>` : ''}
+                        ${item.shade ? `<span>🌿 ${item.shade}</span>` : ''}
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                      ${item.profileKey ? `<button class="btn-sm" onclick="openActivityProfile('${item.profileKey}')">Info</button>` : ''}
+                      <button class="btn-sm ${isPinned ? 'pinned' : ''}" onclick="togglePin('${item.name.replace(/'/g, "\\'")}')">
+                        ${isPinned ? '✓ Pinned' : '+ Pin'}
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </details>
+
+        <!-- 5. Details Accordion 3: Dining Choices (CLOSED BY DEFAULT) -->
+        <details id="acc-dining" ontoggle="handleAccordionToggle(this)">
+          <summary>
+            <span>🍽️ Dining Choices</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tap to plan meals</span>
+          </summary>
+          <div class="details-content">
+            <div class="dining-grid">
+              <div class="dining-box">
+                <strong>Breakfast</strong>
+                <select class="dining-select" onchange="saveDining('${day.id}', 'breakfast', this.value)">
+                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.breakfast === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                </select>
+              </div>
+              <div class="dining-box">
+                <strong>Lunch</strong>
+                <select class="dining-select" onchange="saveDining('${day.id}', 'lunch', this.value)">
+                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.lunch === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                </select>
+              </div>
+              <div class="dining-box">
+                <strong>Dinner</strong>
+                <select class="dining-select" onchange="saveDining('${day.id}', 'dinner', this.value)">
+                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.dinner === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          </div>
+        </details>
+      `;
+
+      triggerViewTransition(canvas);
+
+      setTimeout(() => {
+        const activePill = document.getElementById(`pill-${day.id}`);
+        if (activePill) {
+          activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }, 50);
+    }
+
+    function getAssignedSlotName(slots, itemName) {
+      if (slots.morning === itemName) return "Morning";
+      if (slots.afternoon === itemName) return "Afternoon";
+      if (slots.evening === itemName) return "Evening";
+      return "Assign...";
+    }
+
+    function handleAccordionToggle(el) {
+      if (el.open) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 80);
+      }
+    }
+
+    function setActiveTab(tabId) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      const tab = document.getElementById(tabId);
+      if (tab) tab.classList.add("active");
+    }
+
+    function getSlotDisplay(original, custom) {
+      if (custom && original) return `${original} • <strong>${custom}</strong>`;
+      if (custom) return `<strong>${custom}</strong>`;
+      return original;
+    }
+
+    function assignSlot(dayId, activityName, slot) {
+      let customSlots = getStoredData(`slots_${dayId}`, {});
+      for (let key in customSlots) {
+        if (customSlots[key] === activityName) delete customSlots[key];
+      }
+      if (slot && slot !== "clear") customSlots[slot] = activityName;
+      setStoredData(`slots_${dayId}`, customSlots);
+      showDayView(dayId);
+    }
+
+    function clearSlot(dayId, slot) {
+      let customSlots = getStoredData(`slots_${dayId}`, {});
+      delete customSlots[slot];
+      setStoredData(`slots_${dayId}`, customSlots);
+      showDayView(dayId);
+    }
+
+    function saveNote(dayId, text) { setStoredData(`note_${dayId}`, text); }
+
+    function togglePin(activityName) {
+      let pinned = getStoredData(`pinned_${currentDayId}`, []);
+      let customSlots = getStoredData(`slots_${currentDayId}`, {});
+
+      if (pinned.includes(activityName)) {
+        pinned = pinned.filter(a => a !== activityName);
+        for (let key in customSlots) {
+          if (customSlots[key] === activityName) delete customSlots[key];
+        }
+        setStoredData(`slots_${currentDayId}`, customSlots);
+      } else {
+        pinned.push(activityName);
+      }
+      setStoredData(`pinned_${currentDayId}`, pinned);
+      showDayView(currentDayId);
+    }
+
+    function saveDining(dayId, meal, val) {
+      const day = TRIP_DAYS.find(d => d.id === dayId);
+      const diningState = getStoredData(`dining_${dayId}`, day.defaultDining);
+      diningState[meal] = val;
+      setStoredData(`dining_${dayId}`, diningState);
+    }
+
+    /* DIRECTORIES WITH EXPLICIT BACK BUTTONS */
+    function showDiningDirectory() {
+      currentView = "dining-dir";
+      setActiveTab("tab-dining");
+      const canvas = document.getElementById("main-canvas");
+      canvas.innerHTML = `
+        <div class="subpage-bar">
+          <button class="back-btn" onclick="showDayView('${currentDayId}')">← Back to Daily Guide</button>
+          <button class="back-btn" onclick="showHub()">🏡 Trip Home</button>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:1.4rem; color:var(--primary-dark); margin-bottom:14px;">🍽️ Dining Directory</h2>
+          <table class="dir-table">
+            <thead>
+              <tr><th>Restaurant</th><th>Category</th><th>Status</th><th>Address</th></tr>
+            </thead>
+            <tbody>
+              ${Object.entries(DINING_PROFILES).map(([key, item]) => `
+                <tr onclick="openDiningProfile('${key}')">
+                  <td style="font-weight:700; color:var(--primary-dark);">${item.name}</td>
+                  <td>${item.category}</td>
+                  <td><span style="color:${item.status.includes('REQUIRED') ? 'var(--accent-coral)' : '#15803D'}; font-weight:700;">${item.status}</span></td>
+                  <td>${item.address}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      triggerViewTransition(canvas);
+    }
+
+    function showActivityDirectory() {
+      currentView = "act-dir";
+      setActiveTab("tab-act");
+      const canvas = document.getElementById("main-canvas");
+      canvas.innerHTML = `
+        <div class="subpage-bar">
+          <button class="back-btn" onclick="showDayView('${currentDayId}')">← Back to Daily Guide</button>
+          <button class="back-btn" onclick="showHub()">🏡 Trip Home</button>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:1.4rem; color:var(--primary-dark); margin-bottom:14px;">🎯 Activity & Excursions Directory</h2>
+          <table class="dir-table">
+            <thead>
+              <tr><th>Attraction</th><th>Category</th><th>Status</th><th>Location</th></tr>
+            </thead>
+            <tbody>
+              ${Object.entries(ACTIVITY_PROFILES).map(([key, item]) => `
+                <tr onclick="openActivityProfile('${key}')">
+                  <td style="font-weight:700; color:var(--primary-dark);">${item.name}</td>
+                  <td>${item.category}</td>
+                  <td>${item.status}</td>
+                  <td>${item.location}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      triggerViewTransition(canvas);
+    }
+
+    function openProvisioningModal() {
+      const storedChecks = getStoredData("provisioning_checks", {});
+      document.getElementById("modal-title").innerText = `🛒 Cottage Provisions Checklist`;
+      
+      let html = `<p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Check off items as packed or purchased. Saves automatically.</p>`;
+      
+      for (let category in PROVISIONING_DATA) {
+        html += `
+          <div style="margin-bottom:18px;">
+            <div style="font-size:0.82rem; font-weight:800; color:var(--primary-dark); text-transform:uppercase; margin-bottom:6px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">${category}</div>
+            ${PROVISIONING_DATA[category].map((item, idx) => {
+              const key = `${category}_${idx}`;
+              const isDone = !!storedChecks[key];
+              return `
+                <label class="check-item ${isDone ? 'done' : ''}">
+                  <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleChecklist('${key}', this.checked)">
+                  <span>${item}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+      
+      document.getElementById("modal-body").innerHTML = html;
+      openModal();
+    }
+
+    function toggleChecklist(key, isChecked) {
+      let storedChecks = getStoredData("provisioning_checks", {});
+      storedChecks[key] = isChecked;
+      setStoredData("provisioning_checks", storedChecks);
+      openProvisioningModal();
+    }
+
+    function openDiningProfile(key) {
+      const p = DINING_PROFILES[key];
+      if (!p) return;
+      document.getElementById("modal-title").innerText = `🍽️ ${p.name}`;
+      document.getElementById("modal-body").innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div><strong style="color:var(--primary-dark);">Category:</strong> ${p.category}</div>
+          <div><strong style="color:var(--primary-dark);">Status:</strong> <span style="font-weight:800; color:${p.status.includes('REQUIRED') ? 'var(--accent-coral)' : '#15803D'}">${p.status}</span></div>
+          <div><strong style="color:var(--primary-dark);">Address:</strong> ${p.address}</div>
+          <div><strong style="color:var(--primary-ocean);">Phone:</strong> ${p.phone}</div>
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">${p.notes}</div>
+          <div style="margin-top:6px;"><a href="${p.mapsUrl}" target="_blank" style="display:inline-block; background:var(--primary); color:white; font-weight:700; padding:8px 16px; border-radius:6px; text-decoration:none;">📍 Open in Google Maps</a></div>
+        </div>
+      `;
+      openModal();
+    }
+
+    function openActivityProfile(key) {
+      const p = ACTIVITY_PROFILES[key];
+      if (!p) return;
+      document.getElementById("modal-title").innerText = `🎯 ${p.name}`;
+      document.getElementById("modal-body").innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div><strong style="color:var(--primary-dark);">Category:</strong> ${p.category}</div>
+          <div><strong style="color:var(--primary-dark);">Location:</strong> ${p.location}</div>
+          <div><strong style="color:var(--primary-dark);">Status:</strong> ${p.status}</div>
+          <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">${p.notes}</div>
+          <div style="margin-top:6px;"><a href="${p.mapsUrl}" target="_blank" style="display:inline-block; background:var(--primary); color:white; font-weight:700; padding:8px 16px; border-radius:6px; text-decoration:none;">📍 Open in Google Maps</a></div>
+        </div>
+      `;
+      openModal();
+    }
+
+    function openProfileByName(name) {
+      const act = Object.entries(ACTIVITY_PROFILES).find(([k, v]) => v.name === name);
+      if (act) { openActivityProfile(act[0]); return; }
+      const din = Object.entries(DINING_PROFILES).find(([k, v]) => v.name === name);
+      if (din) { openDiningProfile(din[0]); }
+    }
+
+    function openModule(key) {
+      const mod = MODULES[key];
+      if (!mod) return;
+      document.getElementById("modal-title").innerText = mod.title;
+      document.getElementById("modal-body").innerHTML = mod.content;
+      openModal();
+    }
+
+    function openModal() {
+      document.getElementById("modal-drawer").classList.add("open");
+      document.getElementById("modal-backdrop").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("modal-drawer").classList.remove("open");
+      document.getElementById("modal-backdrop").classList.remove("open");
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
