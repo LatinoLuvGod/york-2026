@@ -12,13 +12,18 @@
       --secondary: #00b4d8;
       --accent: #ffb703;
       --accent-sand: #d97706;
+      --accent-coral: #ef4444;
+      --accent-rose: #e11d48;
       --text-dark: #0f172a;
       --text-muted: #475569;
       --glass-bg: rgba(255, 255, 255, 0.92);
       --glass-border: rgba(255, 255, 255, 0.75);
       --glass-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
       --radius: 18px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Extra-Long Smooth Transitions */
+      --ease-flow: cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-slow: all 0.75s var(--ease-flow);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,7 +86,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .header-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
 
@@ -98,7 +103,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; }
     .tab-btn.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
@@ -125,7 +130,7 @@
       flex-direction: column;
       gap: 18px;
       flex-shrink: 0;
-      transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: margin-left 0.75s var(--ease-flow);
       z-index: 40;
       box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
     }
@@ -142,7 +147,7 @@
       font-weight: 600;
       color: var(--text-dark);
       cursor: pointer;
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .nav-item:hover { background: rgba(0, 119, 182, 0.08); color: var(--primary-dark); }
     .nav-item.active { background: var(--primary); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3); }
@@ -162,9 +167,14 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
+      opacity: 1;
+      transition: opacity 0.4s var(--ease-flow);
+    }
+    .container.fading {
+      opacity: 0;
     }
 
-    /* St. Maarten Glass Cards */
+    /* Glass Cards */
     .card {
       background: var(--glass-bg);
       backdrop-filter: blur(16px);
@@ -173,7 +183,7 @@
       border-radius: var(--radius);
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .card:hover { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
 
@@ -224,7 +234,7 @@
       padding: 22px 18px;
       cursor: pointer;
       text-align: left;
-      transition: var(--transition);
+      transition: var(--transition-slow);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
     .option-btn:hover {
@@ -262,7 +272,7 @@
       font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      transition: var(--transition);
+      transition: var(--transition-slow);
       flex-shrink: 0;
     }
     .scroller-arrow-btn:hover { background: var(--primary-dark); color: white; }
@@ -287,7 +297,7 @@
       color: var(--text-dark);
       cursor: pointer;
       white-space: nowrap;
-      transition: var(--transition);
+      transition: var(--transition-slow);
       flex-shrink: 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
@@ -351,13 +361,13 @@
     .badge-mod { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
     .badge-depart { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
-    /* Accordions */
+    /* Accordions with Flowing Fade & Slide */
     details {
       background: rgba(255, 255, 255, 0.92);
       border: 1px solid var(--glass-border);
       border-radius: 14px;
       padding: 16px 20px;
-      transition: var(--transition);
+      transition: var(--transition-slow);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
     details[open] { border-color: var(--primary); box-shadow: 0 6px 20px rgba(0, 119, 182, 0.1); }
@@ -372,7 +382,16 @@
       justify-content: space-between;
     }
     summary:hover { color: var(--primary); }
-    .details-content { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #cbd5e1; }
+    .details-content { 
+      margin-top: 14px; 
+      padding-top: 14px; 
+      border-top: 1px dashed #cbd5e1;
+      animation: smoothReveal 0.75s var(--ease-flow) forwards;
+    }
+    @keyframes smoothReveal {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     /* Schedule Stack */
     .schedule-stack { display: flex; flex-direction: column; gap: 8px; }
@@ -417,7 +436,7 @@
       font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .btn-sm:hover { background: #e2e8f0; transform: translateY(-1px); }
     .btn-sm.pinned { background: var(--accent); color: var(--text-dark); border-color: var(--accent); }
@@ -466,7 +485,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition);
+      transition: var(--transition-slow);
     }
     .back-btn:hover { background: white; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
@@ -482,7 +501,7 @@
       -webkit-backdrop-filter: blur(16px);
       border-left: 3px solid var(--primary);
       box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
-      transition: right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: right 0.75s var(--ease-flow);
       z-index: 200;
       padding: 28px;
       overflow-y: auto;
@@ -495,7 +514,7 @@
     .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--primary-dark); }
     .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; }
     .modal-close:hover { color: var(--accent-rose); }
-    .modal-body { font-size: 0.86rem; line-height: 1.6; color: var(--text-main); }
+    .modal-body { font-size: 0.86rem; line-height: 1.6; color: var(--text-dark); }
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -503,7 +522,7 @@
       backdrop-filter: blur(4px);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.65s ease;
       z-index: 199;
     }
     .modal-backdrop.open { opacity: 1; pointer-events: auto; }
@@ -516,11 +535,12 @@
     .dir-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; }
     .dir-table tr:hover { background: #f8fafc; }
 
+    /* Silky Long Fade-and-Glide Animation */
     .view-transition {
-      animation: viewSlideFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: viewSlideFadeIn 0.85s var(--ease-flow) forwards;
     }
     @keyframes viewSlideFadeIn {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
@@ -633,7 +653,7 @@
     const DINING_PROFILES = {
       "sun_surf": { name: "Sun and Surf / Surf and Sand", category: "Casual Lunch", timing: "Arrival Day lunch (~12:00–1:00 PM)", status: "Walk-in basis", address: "264 Long Beach Ave, York, ME", phone: "(207) 363-2961", mapsUrl: "https://maps.app.goo.gl/9r9fRk9wG8wZq2vU7", notes: "Overlooks Long Sands. Great arrival tradition lunch spot." },
       "sand_dollar": { name: "The Sand Dollar Bar & Grille", category: "Casual Lunch", timing: "Downtown York Beach shopping lunch", status: "Walk-in", address: "2 Beach St, York Beach, ME", phone: "(207) 363-5000", mapsUrl: "https://maps.google.com/?q=The+Sand+Dollar+York+Beach+ME", notes: "Central downtown location across from Short Sands beach park." },
-      "goldenrod": { name: "The Goldenrod", category: "Classic Diner & Taffy", timing: "Paired with Water Country or beach afternoon", status: "Walk-in", address: "2 Railroad Ave, York Beach, ME", phone: "(207) 363-2621", mapsUrl: "https://maps.google.com/?q=The+Goldenrod+York+Beach+ME", notes: "Famous Goldenrod kisses taffy-pulling window and classic diner menu." },
+      "goldenrod": { name: "The Goldenrod", category: "Classic Diner & Taffy", timing: "Paired with Water Country, friends visit, or beach afternoon", status: "Walk-in", address: "2 Railroad Ave, York Beach, ME", phone: "(207) 363-2621", mapsUrl: "https://maps.google.com/?q=The+Goldenrod+York+Beach+ME", notes: "Famous Goldenrod kisses taffy-pulling window and classic diner menu." },
       "treehouse": { name: "Treehouse Taqueria", category: "Mexican / Casual Dinner", timing: "Ogunquit day early dinner (~3:30–4:00 PM)", status: "Walk-in", address: "237 Shore Rd, Ogunquit, ME", phone: "(207) 646-0440", mapsUrl: "https://maps.app.goo.gl/Vp8p3s3W2p4YvP4r7", notes: "Open-air second floor deck overlooking Perkins Cove." },
       "omelette_factory": { name: "The Omelette Factory", category: "Classic Breakfast", timing: "Operating hours 7:00 AM – 1:00 PM", status: "Walk-in", address: "422 Main St, Ogunquit, ME", phone: "(207) 646-4110", mapsUrl: "https://maps.app.goo.gl/wJk8z9jBv9Q2YVpE8", notes: "High-protein breakfast spot anchored for Ogunquit Day kickoff." },
       "union_bluff": { name: "Union Bluff Grill & Dining Room", category: "Upscale Waterfront", timing: "Evening dinner overlooking Short Sands", status: "⚠️ RESERVATION REQUIRED", address: "8 Beach St, York Beach, ME", phone: "(207) 363-1333", mapsUrl: "https://maps.google.com/?q=Union+Bluff+Grill+York+Beach", notes: "Waterfront patio and indoor dining room overlooking Short Sands." },
@@ -695,8 +715,8 @@
         label: "Tue Aug 18",
         title: "Tuesday, August 18",
         quote: "“High tides and good vibes on Short Sands.”",
-        highlightLead: "🏖️ Morning Beach Setup & Evening M&M Drinks Out",
-        highlightPills: ["🏖️ 8:30 AM – 12:30 PM Sand Window", "💼 Matthew Morning Work Block", "🍹 Evening M&M Cocktails"],
+        highlightLead: "💼 Matthew Morning Work Block & Evening M&M Drinks Out",
+        highlightPills: ["💼 Matthew Morning Work Block", "🍹 Evening M&M Cocktails", "🌿 Open Flexible Afternoon"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure",
         tag: "Short Sands",
@@ -725,8 +745,8 @@
         label: "Wed Aug 19",
         title: "Wednesday, August 19",
         quote: "“Every wave brings a fresh start.”",
-        highlightLead: "🏖️ Mid-Morning Sand Expanse & Matthew Departs Home",
-        highlightPills: ["🧘 Michael Therapy / Nutrition", "🏖️ 9:00 AM – 1:30 PM Beach Expanse", "🚗 Matthew Evening Departure"],
+        highlightLead: "🧘 Morning Therapy & Matthew Evening Departure Home",
+        highlightPills: ["🧘 Michael Therapy / Nutrition", "🚗 Matthew Evening Departure", "🏡 Cottage Downtime"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure",
         tag: "Short Sands",
@@ -756,7 +776,7 @@
         title: "Thursday, August 20 — MATTHEW AT HOME",
         quote: "“Even on workdays, the coast is calling.”",
         highlightLead: "💼 Matthew Working in Melrose • Michael & Maya Explore York",
-        highlightPills: ["💼 Matthew Work Day", "🏖️ Late Morning Beach Window", "🏡 Matthew Returns Tonight"],
+        highlightPills: ["💼 Matthew Work Day", "🏡 Matthew Returns Tonight", "🎯 Open Daytime Adventures"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure (Michael & Maya)",
         tag: "Home/Work",
@@ -785,8 +805,8 @@
         label: "Fri Aug 21",
         title: "Friday, August 21 — Matthew at TP",
         quote: "“Find me where the green meets the ocean breeze.”",
-        highlightLead: "🏌️ Matthew Solo Day Pass at TP • Long Sands Low Tide",
-        highlightPills: ["🏌️ Matthew Solo Day Pass", "🏖️ 11:00 AM – 3:30 PM Midday Sand", "🥧 Cider Hill Farm Option"],
+        highlightLead: "🏌️ Matthew Solo Day Pass at TP • Open Options for Michael & Maya",
+        highlightPills: ["🏌️ Matthew Solo Day Pass", "🥧 Cider Hill Farm Option", "🌲 Shaded Walks & Outings"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure (Michael & Maya)",
         tag: "Twin Ponds",
@@ -816,7 +836,7 @@
         title: "Saturday, August 22 — Laura’s House Visit",
         quote: "“Good food, great family, and sandy feet.”",
         highlightLead: "🏠 Family Gathering & Lunch at Laura’s House (1:00 PM)",
-        highlightPills: ["🌿 Shaded Morning Walk", "🥪 1:00 PM Laura's Lunch!", "🏖️ Late Afternoon Sand"],
+        highlightPills: ["🌿 Shaded Morning Walk", "🥪 1:00 PM Laura's Lunch!", "🎲 Relaxed Evening Games"],
         isCYOA: false,
         cyoaHeader: "🎯 Scheduled Activities & Day Route",
         tag: "Laura’s",
@@ -841,13 +861,13 @@
       {
         id: "2026-08-23",
         label: "Sun Aug 23",
-        title: "Sunday, August 23",
+        title: "Sunday, August 23 — Friends Visit & The Goldenrod",
         quote: "“Sunday on the coast moves just a little slower.”",
-        highlightLead: "🏖️ Prime Sunday Afternoon Expanse on Long Sands",
-        highlightPills: ["🏖️ 12:30 PM – 5:00 PM Long Sands", "🌲 Wiggly Bridge Shaded Loop", "🌊 2:22 PM Low Tide"],
-        isCYOA: true,
-        cyoaHeader: "🎯 Choose Your Own Adventure",
-        tag: "Long Sands",
+        highlightLead: "👥 Jenn & Daric Visit (3:00 PM) & Dinner at The Goldenrod",
+        highlightPills: ["👥 3:00 PM Jenn & Daric Visit", "🍦 The Goldenrod Dinner", "🏡 Cottage Hospitality"],
+        isCYOA: false,
+        cyoaHeader: "🎯 Scheduled Activities & CYOA Options",
+        tag: "Friends Visit",
         gauge: "VERY GOOD",
         gaugeClass: "badge-prime",
         weatherType: "warm",
@@ -857,14 +877,18 @@
         lowTide: "2:22 PM (2.0')",
         highTide: "8:40 PM (8.4')",
         sandWindow: "12:30 PM – 5:00 PM (Long Sands)",
-        schedule: { morning: "— Open / Flexible —", afternoon: "— Open / Flexible —", evening: "— Open / Flexible —" },
-        defaultDining: { breakfast: "", lunch: "", dinner: "" },
+        schedule: { 
+          morning: "— Open / Relaxed Porch Downtime —", 
+          afternoon: "3:00 PM Jenn & Daric arrive at cottage", 
+          evening: "Dinner with Jenn & Daric at The Goldenrod" 
+        },
+        defaultDining: { breakfast: "", lunch: "", dinner: "The Goldenrod" },
         cyoa: [
+          { name: "Jenn & Daric Visit", desc: "Friends arrive at cottage around 3:00 PM", category: "cottage", drive: "0m (Base)", shade: "Cottage", profileKey: null },
+          { name: "The Goldenrod Dinner", desc: "Dinner and classic taffy/ice cream with Jenn & Daric", category: "dining", drive: "Downtown York Beach", shade: "Indoor Diner", profileKey: "goldenrod" },
           { name: "Long Sands Beach", desc: "Setup window 12:30 PM – 5:00 PM (peaks near 2:22 PM low tide)", category: "beach", drive: "~3m South", shade: "Full Sun", profileKey: "long_sands" },
           { name: "Fisherman’s Walk & Wiggly Bridge", desc: "21 Clark’s Lane (0.8-mi shaded river walk)", category: "walks", drive: "~6m South", shade: "90% Canopy", profileKey: "wiggly_bridge" },
           { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
-          { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
-          { name: "Cinema Encore", desc: "Event cinema encore matinee (SIX Live! at Regal Fox Run) or Wells Flagship", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "regal_fox_run" },
           { name: "Cottage Activities", desc: "Board games, puzzles, and cottage relaxation", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
         ]
       },
@@ -873,11 +897,11 @@
         label: "Mon Aug 24",
         title: "Monday, August 24",
         quote: "“Breathe in the salt, breathe out the stress.”",
-        highlightLead: "🏖️ Mid-Afternoon Beach Setup & Movie Night Options",
-        highlightPills: ["🏖️ 1:30 PM – 5:30 PM Receding Tide", "🍿 Cinema Matrix: The Odyssey", "🌲 Low-Heat Trail Option"],
+        highlightLead: "💻 Matthew Work Block (12:00 PM – 4:00 PM)",
+        highlightPills: ["💻 12:00 PM – 4:00 PM Matthew Work", "🤝 1:00 PM CFM Check-in", "🌲 Low-Heat Trail Options"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure",
-        tag: "Short Sands",
+        tag: "Work Block",
         gauge: "GOOD",
         gaugeClass: "badge-good",
         weatherType: "warm",
@@ -888,7 +912,7 @@
         lowTide: "3:17 PM (2.0')",
         highTide: "9:36 PM (8.6')",
         sandWindow: "1:30 PM – 5:30 PM (Short Sands)",
-        schedule: { morning: "— Open / Flexible —", afternoon: "— Open / Flexible —", evening: "— Open / Flexible —" },
+        schedule: { morning: "— Open / Flexible —", afternoon: "Matthew Work Block (12:00 PM – 4:00 PM • 1:00 PM CFM Check-in)", evening: "— Open / Flexible —" },
         defaultDining: { breakfast: "", lunch: "", dinner: "" },
         cyoa: [
           { name: "Short Sands Beach", desc: "Setup window 1:30 PM – 5:30 PM (peaks near 3:17 PM low tide)", category: "beach", drive: "Walk / 2m", shade: "Full Sun", profileKey: "short_sands" },
@@ -896,7 +920,7 @@
           { name: "Water Country", desc: "Portsmouth, NH (10:00 AM – 5:00 PM)", category: "excursions", drive: "~15m South", shade: "Cabana Req", profileKey: "water_country" },
           { name: "Cider Hill Farm", desc: "Amesbury, MA (8:00 AM – 5:00 PM)", category: "excursions", drive: "~25m", shade: "Partial", profileKey: "cider_hill" },
           { name: "Cinema", desc: "Wells Flagship (The Odyssey) or Regal Fox Run", category: "indoor", drive: "~15m", shade: "A/C Indoor", profileKey: "flagship_wells" },
-          { name: "Cottage Activities", desc: "Board games, reading, and puzzles", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
+          { name: "Cottage Activities", desc: "Board games, reading, and puzzles at home", category: "cottage", drive: "0m", shade: "Home", profileKey: null }
         ]
       },
       {
@@ -919,7 +943,7 @@
         lowTide: "4:10 PM (1.7')",
         highTide: "10:20 AM (8.0')",
         sandWindow: "2:30 PM – 6:30 PM (Long Sands)",
-        schedule: { morning: "Omelette Factory • Mini-Golf • Marginal Way • Shopping", afternoon: "Treehouse Taqueria (~3:30–4:00 PM)", evening: "Optional late afternoon sand setup" },
+        schedule: { morning: "Omelette Factory • Mini-Golf • Marginal Way • Shopping", afternoon: "Treehouse Taqueria (~3:30–4:00 PM)", evening: "Optional evening relaxation" },
         defaultDining: { breakfast: "The Omelette Factory", lunch: "", dinner: "Treehouse Taqueria" },
         cyoa: [
           { name: "The Omelette Factory", desc: "Breakfast anchor (Opens 7:00 AM at 422 Main St)", category: "excursions", drive: "~15m North", shade: "Indoor", profileKey: "omelette_factory" },
@@ -935,8 +959,8 @@
         label: "Wed Aug 26",
         title: "Wednesday, August 26",
         quote: "“A table for two and sunset over the water.”",
-        highlightLead: "💼 Work & Therapy Morning • Michael & Matthew Date Night",
-        highlightPills: ["💼 Morning Work & Therapy", "🏖️ 3:00 PM – 7:30 PM Prime Sand", "🍷 M&M Dinner Date Night"],
+        highlightLead: "💼 Morning Work Block & Therapy • Michael & Matthew Date Night",
+        highlightPills: ["💼 7:00 AM – 11:00 AM Matthew Work", "🍷 M&M Dinner Date Night", "🧘 Therapy Sessions"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure",
         tag: "Date Night",
@@ -950,7 +974,7 @@
         lowTide: "5:00 PM (1.3')",
         highTide: "11:08 AM (8.4')",
         sandWindow: "3:00 PM – 7:30 PM (Long Sands)",
-        schedule: { morning: "Matthew Works • Maya Therapy • Michael Therapy", afternoon: "— Open / Flexible —", evening: "Michael & Matthew Dinner Date Night" },
+        schedule: { morning: "Matthew Work Block (7:00–11:00 AM • 9:30 AM Michele G.) • Therapy", afternoon: "— Open / Flexible —", evening: "Michael & Matthew Dinner Date Night" },
         defaultDining: { breakfast: "", lunch: "", dinner: "Date Night Dinner" },
         cyoa: [
           { name: "Long Sands Beach", desc: "Setup window 3:00 PM – 7:30 PM (peaks near 5:00 PM low tide)", category: "beach", drive: "~3m South", shade: "Full Sun", profileKey: "long_sands" },
@@ -967,7 +991,7 @@
         title: "Thursday, August 27 — Michael at TP / Take Flight",
         quote: "“Courage above the trees, calm on the shore.”",
         highlightLead: "🧗 Take Flight Aerial Adventure (10 AM) & Solo Pass Swap",
-        highlightPills: ["🧗 10:00 AM Take Flight Kittery", "🏌️ Michael Twin Ponds Pass", "🏖️ 3:30 PM Golden Hour Beach"],
+        highlightPills: ["🧗 10:00 AM Take Flight Kittery", "🏌️ Michael Twin Ponds Pass", "📦 Pre-pack Prep"],
         isCYOA: false,
         cyoaHeader: "🎯 Scheduled Day Plan & Activities",
         tag: "Take Flight",
@@ -981,7 +1005,7 @@
         lowTide: "5:47 PM (0.8')",
         highTide: "11:53 AM (8.8')",
         sandWindow: "3:30 PM – 8:00 PM (Short Sands / Pre-pack)",
-        schedule: { morning: "Michael at TP • Matthew & Maya Take Flight (10 AM)", afternoon: "Michael at TP • Beach setup", evening: "Michael at TP" },
+        schedule: { morning: "Michael at TP • Matthew & Maya Take Flight (10 AM)", afternoon: "Michael at TP • Afternoon open", evening: "Michael at TP" },
         defaultDining: { breakfast: "", lunch: "", dinner: "" },
         cyoa: [
           { name: "Take Flight Aerial Adventure", desc: "Kittery, ME • Target 10:00 AM reservation (Matthew & Maya)", category: "excursions", drive: "~12m South", shade: "Forest Canopy", profileKey: "take_flight" },
@@ -995,8 +1019,8 @@
         label: "Fri Aug 28",
         title: "Friday, August 28 — Final Beach Day",
         quote: "“The best memories are coated in sand and sunset.”",
-        highlightLead: "🏖️ Matthew Morning Work Block & Final Prime Beach Setup Window",
-        highlightPills: ["💼 Matthew Morning Work Block", "🏖️ 4:00 PM – 8:00 PM Low Tide Setup", "📦 Begin Cottage Staging"],
+        highlightLead: "💼 Matthew Morning Work Block (7:00 AM – 10:00 AM)",
+        highlightPills: ["💼 7:00 AM – 10:00 AM Work Block", "🤝 8:00 AM Steph Meeting", "📦 Begin Cottage Staging"],
         isCYOA: true,
         cyoaHeader: "🎯 Choose Your Own Adventure",
         tag: "Final Beach",
@@ -1010,7 +1034,7 @@
         lowTide: "6:03 AM (0.1') / 6:11 PM (0.5')",
         highTide: "12:02 PM (8.7')",
         sandWindow: "4:00 PM – 8:00 PM (Long Sands)",
-        schedule: { morning: "Matthew Work Block", afternoon: "— Open / Flexible —", evening: "Final Cottage Dinner & Farewell" },
+        schedule: { morning: "Matthew Work Block (7:00 AM – 10:00 AM • Steph Mtg 8:00 AM)", afternoon: "— Open / Flexible —", evening: "Final Cottage Dinner & Farewell" },
         defaultDining: { breakfast: "", lunch: "", dinner: "" },
         cyoa: [
           { name: "Long Sands Beach", desc: "Final full beach window (4:00 PM – 8:00 PM • Peak low tide 6:11 PM)", category: "beach", drive: "~3m South", shade: "Sunset Sand", profileKey: "long_sands" },
@@ -1051,9 +1075,8 @@
       }
     ];
 
-    let currentDayId = "2026-08-17";
+    let currentDayId = "2026-08-23";
     let currentView = "hub";
-    let activeFilter = "all";
 
     function getStoredData(key, fallback) {
       try { const item = localStorage.getItem(key); return item ? JSON.parse(item) : fallback; } catch (e) { return fallback; }
@@ -1092,9 +1115,7 @@
     }
 
     function jumpToToday() {
-      const today = new Date().toISOString().split('T')[0];
-      const match = TRIP_DAYS.find(d => d.id === today);
-      showDayView(match ? match.id : TRIP_DAYS[0].id);
+      showDayView("2026-08-23");
     }
 
     function scrollDates(offset) {
@@ -1105,10 +1126,14 @@
     }
 
     function triggerViewTransition(canvas) {
-      canvas.classList.remove("view-transition");
-      void canvas.offsetWidth;
-      canvas.classList.add("view-transition");
-      document.getElementById("viewport-scroll").scrollTop = 0;
+      canvas.classList.add("fading");
+      setTimeout(() => {
+        canvas.classList.remove("view-transition");
+        void canvas.offsetWidth;
+        canvas.classList.add("view-transition");
+        canvas.classList.remove("fading");
+        document.getElementById("viewport-scroll").scrollTop = 0;
+      }, 120);
     }
 
     /* VIEW 1: BALANCED 3-TILE HUB HOME */
@@ -1117,19 +1142,7 @@
       setActiveTab("tab-hub");
       renderNav();
 
-      const today = new Date().toISOString().split('T')[0];
-      const match = TRIP_DAYS.find(d => d.id === today);
-      const featuredDay = match || TRIP_DAYS[0];
-
-      const tripStartDate = new Date("2026-08-17T08:00:00");
-      const now = new Date();
-      const diffDays = Math.ceil((tripStartDate - now) / (1000 * 60 * 60 * 24));
-      
-      let countdownStatus = "";
-      if (diffDays > 1) countdownStatus = `⏱️ ${diffDays} days until York!`;
-      else if (diffDays === 1) countdownStatus = `⏱️ Vacation starts tomorrow!`;
-      else if (diffDays <= 0 && diffDays >= -12) countdownStatus = `🌊 Vacation in Progress! (${featuredDay.label})`;
-      else countdownStatus = `🏖️ Vacation Countdown`;
+      const featuredDay = TRIP_DAYS.find(d => d.id === "2026-08-23") || TRIP_DAYS[0];
 
       const canvas = document.getElementById("main-canvas");
       canvas.innerHTML = `
@@ -1209,12 +1222,12 @@
         ...Object.values(DINING_PROFILES).map(d => d.name),
         "Cottage Staples",
         "Laura's House Visit",
+        "The Goldenrod",
         "Downtown Portsmouth",
         "Home Prep (Melrose)",
         "Date Night Dinner"
       ];
 
-      // Dynamic Color Scheme Helpers
       let weatherBg = "background:#e0f2fe; border-color:#bae6fd; color:#0369a1;";
       if (day.weatherType === 'warm') weatherBg = "background:#fef3c7; border-color:#fde68a; color:#b45309;";
       if (day.weatherType === 'rain') weatherBg = "background:#ede9fe; border-color:#ddd6fe; color:#6d28d9;";
@@ -1224,7 +1237,6 @@
       if (day.uvLevel === 'very-high') uvBg = "background:#fee2e2; border-color:#fecaca; color:#b91c1c;";
 
       canvas.innerHTML = `
-        <!-- Floating Day Scroller Bar (Never clipped, with < > buttons) -->
         <div class="day-scroller-bar">
           <button class="scroller-arrow-btn" onclick="scrollDates(-220)">‹</button>
           <button class="day-pill-btn" style="background:#023e8a; color:white;" onclick="jumpToToday()">📍 Today</button>
@@ -1238,19 +1250,17 @@
           <button class="scroller-arrow-btn" onclick="scrollDates(220)">›</button>
         </div>
 
-        <!-- Prominent Quote Banner -->
         <div class="quote-banner">
           “${day.quote.replace(/[“”"]/g, '')}”
         </div>
 
-        <!-- 1. Top Logistical Snapshot Card with Dynamic Color Styling -->
+        <!-- 1. Top Logistical Snapshot Card -->
         <div class="card" style="display:flex; flex-direction:column; gap:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2 style="margin:0; border:none; padding:0; font-size:1.6rem; color:var(--primary-dark); font-weight:800;">${day.title}</h2>
             <span class="badge-pill ${day.gaugeClass}">🏖️ ${day.gauge}</span>
           </div>
 
-          <!-- Weather & UV Grid with Individual Colors -->
           <div class="metrics-grid">
             <div class="metric-cell" style="${weatherBg}">
               <span class="metric-kicker">Forecast & Rain</span>
@@ -1270,32 +1280,34 @@
             </div>
           </div>
 
-          <!-- Sinusoidal Tide Wave Curve with X-Axis Time Markers -->
+          <!-- Tide Curve with Shaded Sand Window Band -->
           <div style="background:rgba(255,255,255,0.95); border:1px solid rgba(0,119,182,0.18); border-radius:14px; padding:12px 18px;">
             <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:800; color:var(--primary-dark); margin-bottom:4px;">
-              <span>🌊 Daily Tide Progression & Sand Timeline</span>
+              <span>🌊 Daily Tide Progression & Peak Sand Shading</span>
               <span>Low Tide: <strong>${day.lowTide}</strong></span>
             </div>
-            <svg viewBox="0 0 600 64" style="width:100%; height:64px;">
+            <svg viewBox="0 0 600 68" style="width:100%; height:68px;">
               <defs>
                 <linearGradient id="sxmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.45"/>
                   <stop offset="100%" stop-color="#00b4d8" stop-opacity="0.0"/>
                 </linearGradient>
               </defs>
+
+              <rect x="220" y="0" width="160" height="48" fill="rgba(56, 189, 248, 0.22)" stroke="rgba(2, 132, 199, 0.45)" stroke-dasharray="3,3" rx="4" />
+              <text x="232" y="12" font-size="9" font-weight="800" fill="#023e8a">🏖️ PEAK SAND WINDOW</text>
+
               <path d="M0,18 C150,44 200,44 300,8 C400,-8 450,44 600,18 L600,48 L0,48 Z" fill="url(#sxmGrad)"/>
               <path d="M0,18 C150,44 200,44 300,8 C400,-8 450,44 600,18" fill="none" stroke="#0077b6" stroke-width="3" stroke-linecap="round"/>
               <circle cx="300" cy="8" r="5" fill="#ffb703" stroke="#ffffff" stroke-width="2"/>
-              <text x="312" y="12" font-size="10" font-weight="800" fill="#023e8a">Peak Sand (${day.lowTide.split(' ')[0]})</text>
               
-              <!-- X-Axis Timeline Markers -->
               <line x1="0" y1="48" x2="600" y2="48" stroke="#cbd5e1" stroke-width="1"/>
-              <text x="5" y="60" font-size="9" font-weight="600" fill="#64748b">6 AM</text>
-              <text x="120" y="60" font-size="9" font-weight="600" fill="#64748b">9 AM</text>
-              <text x="240" y="60" font-size="9" font-weight="600" fill="#64748b">12 PM</text>
-              <text x="360" y="60" font-size="9" font-weight="600" fill="#64748b">3 PM</text>
-              <text x="480" y="60" font-size="9" font-weight="600" fill="#64748b">6 PM</text>
-              <text x="565" y="60" font-size="9" font-weight="600" fill="#64748b">9 PM</text>
+              <text x="5" y="62" font-size="9" font-weight="600" fill="#64748b">6 AM</text>
+              <text x="120" y="62" font-size="9" font-weight="600" fill="#64748b">9 AM</text>
+              <text x="240" y="62" font-size="9" font-weight="600" fill="#64748b">12 PM</text>
+              <text x="360" y="62" font-size="9" font-weight="600" fill="#64748b">3 PM</text>
+              <text x="480" y="62" font-size="9" font-weight="600" fill="#64748b">6 PM</text>
+              <text x="565" y="62" font-size="9" font-weight="600" fill="#64748b">9 PM</text>
             </svg>
           </div>
 
@@ -1305,9 +1317,9 @@
           </div>
         </div>
 
-        <!-- 2. "What's Happening Today" Card with Pinned Activities -->
+        <!-- 2. "What's Happening Today" Card (Strict Filter: Anchors & User Pinned Only) -->
         <div class="spotlight-card">
-          <div class="spotlight-title">✨ What’s Happening Today</div>
+          <div class="spotlight-title">✨ What’s Happening Today (Locked & Selected)</div>
           <div class="spotlight-text">${day.highlightLead}</div>
           <div class="spotlight-chips">
             ${day.highlightPills.map(p => `
@@ -1315,10 +1327,9 @@
             `).join('')}
           </div>
 
-          <!-- Pinned Activities Workspace inside Spotlight -->
           ${pinned.length > 0 ? `
             <div class="pinned-spotlight-box">
-              <div style="font-size:0.74rem; font-weight:800; color:var(--accent-sand);">📌 Pinned for Today (Assign to a time slot):</div>
+              <div style="font-size:0.74rem; font-weight:800; color:var(--accent-sand);">📌 Confirmed & Pinned Activities:</div>
               ${pinned.map(item => `
                 <div class="pinned-item-row">
                   <span style="color:var(--primary-dark); cursor:pointer;" onclick="openProfileByName('${item.replace(/'/g, "\\'")}')">📍 ${item}</span>
@@ -1338,7 +1349,7 @@
           ` : ''}
         </div>
 
-        <!-- 3. Details Accordion 1: Schedule & Notes (CLOSED BY DEFAULT) -->
+        <!-- 3. Details Accordion 1: Schedule & Notes -->
         <details id="acc-schedule" ontoggle="handleAccordionToggle(this)">
           <summary>
             <span>🕒 Schedule & Daily Focus</span>
@@ -1348,17 +1359,23 @@
             <div class="schedule-stack">
               <div class="schedule-row">
                 <span class="slot-pill slot-morning">☀️ Morning</span>
-                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.morning, customSlots.morning) || '— Open / Flexible —'}</span>
+                <span style="font-weight:600; color:var(--text-dark);">
+                  ${getSlotDisplay(day.schedule.morning, customSlots.morning, diningState.breakfast) || '— Open / Flexible —'}
+                </span>
                 ${customSlots.morning ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'morning')">&times;</button>` : ''}
               </div>
               <div class="schedule-row">
                 <span class="slot-pill slot-afternoon">⛅ Afternoon</span>
-                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.afternoon, customSlots.afternoon) || '— Open / Flexible —'}</span>
+                <span style="font-weight:600; color:var(--text-dark);">
+                  ${getSlotDisplay(day.schedule.afternoon, customSlots.afternoon, diningState.lunch) || '— Open / Flexible —'}
+                </span>
                 ${customSlots.afternoon ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'afternoon')">&times;</button>` : ''}
               </div>
               <div class="schedule-row">
                 <span class="slot-pill slot-evening">🌙 Evening</span>
-                <span style="font-weight:600; color:var(--text-dark);">${getSlotDisplay(day.schedule.evening, customSlots.evening) || '— Open / Flexible —'}</span>
+                <span style="font-weight:600; color:var(--text-dark);">
+                  ${getSlotDisplay(day.schedule.evening, customSlots.evening, diningState.dinner) || '— Open / Flexible —'}
+                </span>
                 ${customSlots.evening ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'evening')">&times;</button>` : ''}
               </div>
             </div>
@@ -1367,7 +1384,7 @@
           </div>
         </details>
 
-        <!-- 4. Details Accordion 2: Activities & CYOA (CLOSED BY DEFAULT) -->
+        <!-- 4. Details Accordion 2: Activities & CYOA -->
         <details id="acc-cyoa" ontoggle="handleAccordionToggle(this)">
           <summary>
             <span>${day.cyoaHeader}</span>
@@ -1400,7 +1417,7 @@
           </div>
         </details>
 
-        <!-- 5. Details Accordion 3: Dining Choices (CLOSED BY DEFAULT) -->
+        <!-- 5. Details Accordion 3: Dining Choices -->
         <details id="acc-dining" ontoggle="handleAccordionToggle(this)">
           <summary>
             <span>🍽️ Dining Choices</span>
@@ -1438,7 +1455,7 @@
         if (activePill) {
           activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
-      }, 50);
+      }, 100);
     }
 
     function getAssignedSlotName(slots, itemName) {
@@ -1452,7 +1469,7 @@
       if (el.open) {
         setTimeout(() => {
           el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 80);
+        }, 180);
       }
     }
 
@@ -1462,10 +1479,15 @@
       if (tab) tab.classList.add("active");
     }
 
-    function getSlotDisplay(original, custom) {
-      if (custom && original) return `${original} • <strong>${custom}</strong>`;
-      if (custom) return `<strong>${custom}</strong>`;
-      return original;
+    function getSlotDisplay(original, custom, mealVal) {
+      let output = original;
+      if (custom && original) output = `${original} • <strong>${custom}</strong>`;
+      else if (custom) output = `<strong>${custom}</strong>`;
+      
+      if (mealVal && mealVal !== "— Open / Unplanned —" && !output.includes(mealVal)) {
+        output += ` • <span style="color:#0284c7; font-weight:700;">🍽️ ${mealVal}</span>`;
+      }
+      return output;
     }
 
     function assignSlot(dayId, activityName, slot) {
@@ -1509,9 +1531,10 @@
       const diningState = getStoredData(`dining_${dayId}`, day.defaultDining);
       diningState[meal] = val;
       setStoredData(`dining_${dayId}`, diningState);
+      showDayView(dayId);
     }
 
-    /* DIRECTORIES WITH EXPLICIT BACK BUTTONS */
+    /* DIRECTORIES */
     function showDiningDirectory() {
       currentView = "dining-dir";
       setActiveTab("tab-dining");
