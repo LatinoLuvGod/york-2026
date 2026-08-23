@@ -21,10 +21,10 @@
       --glass-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
       --radius: 18px;
       
-      /* Silky Long Easing Curves */
+      /* Silky Long Deceleration Curves */
       --ease-flow: cubic-bezier(0.16, 1, 0.3, 1);
       --transition-fluid: all 0.85s var(--ease-flow);
-      --accordion-speed: 0.85s;
+      --accordion-speed: 0.75s;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -169,14 +169,14 @@
       gap: 18px;
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.38s var(--ease-flow), transform 0.38s var(--ease-flow);
+      transition: opacity 0.35s var(--ease-flow), transform 0.35s var(--ease-flow);
     }
     .container.page-out {
       opacity: 0;
-      transform: translateY(-16px);
+      transform: translateY(-14px);
     }
     .container.page-in {
-      animation: pageGlideIn 0.8s var(--ease-flow) forwards;
+      animation: pageGlideIn 0.85s var(--ease-flow) forwards;
     }
     @keyframes pageGlideIn {
       from { opacity: 0; transform: translateY(22px); }
@@ -1167,7 +1167,11 @@
     }
 
     /* Long Luxurious 2-Phase Glide Transition Engine */
+    let isNavigating = false;
     function navigateSmoothly(renderCallback) {
+      if (isNavigating) return;
+      isNavigating = true;
+
       const canvas = document.getElementById("main-canvas");
       canvas.classList.add("page-out");
       canvas.classList.remove("page-in");
@@ -1177,7 +1181,8 @@
         document.getElementById("viewport-scroll").scrollTop = 0;
         canvas.classList.remove("page-out");
         canvas.classList.add("page-in");
-      }, 360);
+        isNavigating = false;
+      }, 350);
     }
 
     /* VIEW 1: BALANCED 3-TILE HUB HOME */
@@ -1520,7 +1525,7 @@
       }, 50);
     }
 
-    /* Isolated Custom Smooth Viewport Scroll Engine */
+    /* Reliable Smooth Scroll Engine */
     function smoothScrollToExpandedBottom(card, extraHeight) {
       const scrollContainer = document.getElementById("viewport-scroll");
       if (!card || !scrollContainer) return;
@@ -1528,25 +1533,23 @@
       const cardRect = card.getBoundingClientRect();
       const containerRect = scrollContainer.getBoundingClientRect();
       
-      // Calculate true document-space bottom + 200px buffer below
       const cardTopInDoc = (cardRect.top - containerRect.top) + scrollContainer.scrollTop;
-      const targetScrollTop = (cardTopInDoc + card.offsetHeight + extraHeight + 200) - scrollContainer.clientHeight;
+      const targetScrollTop = (cardTopInDoc + card.offsetHeight + extraHeight + 180) - scrollContainer.clientHeight;
 
       const startScrollTop = scrollContainer.scrollTop;
       const distance = targetScrollTop - startScrollTop;
 
       if (distance <= 0) return;
 
-      const duration = 1250; // 1.25s continuous slow glide
+      const duration = 1000;
       const startTime = performance.now();
 
       function step(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        // Smooth cubic deceleration
+        // Smooth cubic deceleration curve
         const ease = 1 - Math.pow(1 - progress, 3);
-
         scrollContainer.scrollTop = startScrollTop + (distance * ease);
 
         if (progress < 1) {
@@ -1566,12 +1569,11 @@
 
       if (isOpening) {
         const innerContent = card.querySelector(".accordion-inner-content");
-        const extraHeight = innerContent ? innerContent.scrollHeight + 40 : 240;
+        const extraHeight = innerContent ? innerContent.scrollHeight + 32 : 200;
         
-        // Wait 160ms for accordion height to unroll before starting the gentle scroll
         setTimeout(() => {
           smoothScrollToExpandedBottom(card, extraHeight);
-        }, 160);
+        }, 120);
       }
     }
 
