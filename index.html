@@ -21,13 +21,13 @@
       --glass-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
       --radius: 18px;
       
-      /* Extra-Long Smooth Transitions */
+      /* Silky Long Easing Curves */
       --ease-flow: cubic-bezier(0.16, 1, 0.3, 1);
-      --transition-slow: all 0.75s var(--ease-flow);
+      --transition-fluid: all 0.85s var(--ease-flow);
+      --accordion-speed: 0.85s;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; height: 100%; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -86,7 +86,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .header-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-1px); }
 
@@ -103,7 +103,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; }
     .tab-btn.active { background: white; color: var(--primary-dark); box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
@@ -147,17 +147,17 @@
       font-weight: 600;
       color: var(--text-dark);
       cursor: pointer;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .nav-item:hover { background: rgba(0, 119, 182, 0.08); color: var(--primary-dark); }
     .nav-item.active { background: var(--primary); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3); }
     .nav-sub { font-size: 0.72rem; opacity: 0.85; font-weight: 500; }
 
-    /* Viewport */
+    /* Viewport with Two-Phase Crossfade */
     .viewport {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 20px 80px 20px;
+      padding: 20px 20px 160px 20px;
       display: flex;
       justify-content: center;
     }
@@ -168,10 +168,19 @@
       flex-direction: column;
       gap: 18px;
       opacity: 1;
-      transition: opacity 0.4s var(--ease-flow);
+      transform: translateY(0);
+      transition: opacity 0.38s var(--ease-flow), transform 0.38s var(--ease-flow);
     }
-    .container.fading {
+    .container.page-out {
       opacity: 0;
+      transform: translateY(-16px);
+    }
+    .container.page-in {
+      animation: pageGlideIn 0.8s var(--ease-flow) forwards;
+    }
+    @keyframes pageGlideIn {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Glass Cards */
@@ -183,7 +192,7 @@
       border-radius: var(--radius);
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .card:hover { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
 
@@ -234,7 +243,7 @@
       padding: 22px 18px;
       cursor: pointer;
       text-align: left;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
     .option-btn:hover {
@@ -272,7 +281,7 @@
       font-size: 1rem;
       font-weight: 800;
       cursor: pointer;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
       flex-shrink: 0;
     }
     .scroller-arrow-btn:hover { background: var(--primary-dark); color: white; }
@@ -297,7 +306,7 @@
       color: var(--text-dark);
       cursor: pointer;
       white-space: nowrap;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
       flex-shrink: 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
@@ -320,7 +329,7 @@
     .spotlight-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .spotlight-chip { background: white; border: 1px solid #fde047; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
 
-    /* Pinned Items Drawer inside Spotlight */
+    /* Pinned Items Drawer */
     .pinned-spotlight-box {
       margin-top: 4px;
       padding-top: 10px;
@@ -361,36 +370,77 @@
     .badge-mod { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
     .badge-depart { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
-    /* Accordions with Flowing Fade & Slide */
-    details {
-      background: rgba(255, 255, 255, 0.92);
+    /* Ultra-Smooth Full-Card Accordions */
+    .accordion-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--glass-border);
       border-radius: 14px;
       padding: 16px 20px;
-      transition: var(--transition-slow);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      transition: border-color var(--accordion-speed) var(--ease-flow), box-shadow var(--accordion-speed) var(--ease-flow);
     }
-    details[open] { border-color: var(--primary); box-shadow: 0 6px 20px rgba(0, 119, 182, 0.1); }
-    summary {
+    .accordion-card.open {
+      border-color: var(--primary);
+      box-shadow: 0 6px 20px rgba(0, 119, 182, 0.12);
+    }
+    .accordion-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .accordion-title {
       font-weight: 800;
       color: var(--primary-dark);
-      cursor: pointer;
       font-size: 1.02rem;
-      user-select: none;
+    }
+    .accordion-right-wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
     }
-    summary:hover { color: var(--primary); }
-    .details-content { 
-      margin-top: 14px; 
-      padding-top: 14px; 
+    .accordion-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .accordion-chevron {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: transform var(--accordion-speed) var(--ease-flow), color 0.35s ease;
+    }
+    .accordion-card.open .accordion-chevron {
+      transform: rotate(180deg);
+      color: var(--primary);
+    }
+
+    /* Long Luxurious Height Glide */
+    .accordion-slide-grid {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--accordion-speed) var(--ease-flow);
+    }
+    .accordion-card.open .accordion-slide-grid {
+      grid-template-rows: 1fr;
+    }
+    .accordion-overflow-box {
+      overflow: hidden;
+    }
+    .accordion-inner-content {
+      padding-top: 14px;
+      margin-top: 14px;
       border-top: 1px dashed #cbd5e1;
-      animation: smoothReveal 0.75s var(--ease-flow) forwards;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity calc(var(--accordion-speed) * 0.85) var(--ease-flow), transform calc(var(--accordion-speed) * 0.85) var(--ease-flow);
     }
-    @keyframes smoothReveal {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .accordion-card.open .accordion-inner-content {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Schedule Stack */
@@ -436,7 +486,7 @@
       font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .btn-sm:hover { background: #e2e8f0; transform: translateY(-1px); }
     .btn-sm.pinned { background: var(--accent); color: var(--text-dark); border-color: var(--accent); }
@@ -466,7 +516,7 @@
       cursor: pointer;
     }
 
-    /* Subpage Header with Return Link */
+    /* Subpage Header */
     .subpage-bar {
       display: flex;
       justify-content: space-between;
@@ -485,7 +535,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition-slow);
+      transition: var(--transition-fluid);
     }
     .back-btn:hover { background: white; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
@@ -534,15 +584,6 @@
     .dir-table th { text-align: left; padding: 10px; border-bottom: 2px solid #e2e8f0; font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); }
     .dir-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; }
     .dir-table tr:hover { background: #f8fafc; }
-
-    /* Silky Long Fade-and-Glide Animation */
-    .view-transition {
-      animation: viewSlideFadeIn 0.85s var(--ease-flow) forwards;
-    }
-    @keyframes viewSlideFadeIn {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
@@ -552,17 +593,17 @@
       <button class="header-btn" onclick="toggleSidebar()">
         <span>📅 Dates Menu</span>
       </button>
-      <div class="brand-wrap" onclick="showHub()">
+      <div class="brand-wrap" onclick="navigateSmoothly(showHub)">
         <span class="brand">🌊 York 2026</span>
         <span class="brand-pill">York Getaway</span>
       </div>
     </div>
 
     <div class="nav-tabs">
-      <button class="tab-btn active" id="tab-hub" onclick="showHub()">🏡 Trip Home</button>
-      <button class="tab-btn" id="tab-day" onclick="showDayView()">📅 Daily Guide</button>
-      <button class="tab-btn" id="tab-dining" onclick="showDiningDirectory()">🍽️ Dining</button>
-      <button class="tab-btn" id="tab-act" onclick="showActivityDirectory()">🎯 Activities</button>
+      <button class="tab-btn active" id="tab-hub" onclick="navigateSmoothly(showHub)">🏡 Trip Home</button>
+      <button class="tab-btn" id="tab-day" onclick="navigateSmoothly(() => showDayView())">📅 Daily Guide</button>
+      <button class="tab-btn" id="tab-dining" onclick="navigateSmoothly(showDiningDirectory)">🍽️ Dining</button>
+      <button class="tab-btn" id="tab-act" onclick="navigateSmoothly(showActivityDirectory)">🎯 Activities</button>
       <button class="tab-btn" onclick="openProvisioningModal()">🛒 Provisions</button>
     </div>
   </header>
@@ -579,8 +620,8 @@
       <div>
         <div class="nav-label">Master Directories</div>
         <ul class="nav-list">
-          <li class="nav-item" onclick="showDiningDirectory()"><span>🍽️ Dining Directory</span></li>
-          <li class="nav-item" onclick="showActivityDirectory()"><span>🎯 Activity Directory</span></li>
+          <li class="nav-item" onclick="navigateSmoothly(showDiningDirectory)"><span>🍽️ Dining Directory</span></li>
+          <li class="nav-item" onclick="navigateSmoothly(showActivityDirectory)"><span>🎯 Activity Directory</span></li>
           <li class="nav-item" onclick="openProvisioningModal()"><span>🛒 Cottage Provisions</span></li>
         </ul>
       </div>
@@ -593,7 +634,7 @@
 
     <!-- Main Viewport -->
     <div class="viewport" id="viewport-scroll">
-      <main class="container view-transition" id="main-canvas"></main>
+      <main class="container" id="main-canvas"></main>
     </div>
 
   </div>
@@ -1098,7 +1139,7 @@
     function renderNav() {
       const navList = document.getElementById("itinerary-nav");
       navList.innerHTML = TRIP_DAYS.map(day => `
-        <li class="nav-item ${day.id === currentDayId ? 'active' : ''}" onclick="showDayView('${day.id}')">
+        <li class="nav-item ${day.id === currentDayId ? 'active' : ''}" onclick="navigateSmoothly(() => showDayView('${day.id}'))">
           <span>${day.label}</span>
           <span class="nav-sub">${day.tag}</span>
         </li>
@@ -1115,7 +1156,7 @@
     }
 
     function jumpToToday() {
-      showDayView("2026-08-23");
+      navigateSmoothly(() => showDayView("2026-08-23"));
     }
 
     function scrollDates(offset) {
@@ -1125,15 +1166,18 @@
       }
     }
 
-    function triggerViewTransition(canvas) {
-      canvas.classList.add("fading");
+    /* Long Luxurious 2-Phase Glide Transition Engine */
+    function navigateSmoothly(renderCallback) {
+      const canvas = document.getElementById("main-canvas");
+      canvas.classList.add("page-out");
+      canvas.classList.remove("page-in");
+
       setTimeout(() => {
-        canvas.classList.remove("view-transition");
-        void canvas.offsetWidth;
-        canvas.classList.add("view-transition");
-        canvas.classList.remove("fading");
+        renderCallback();
         document.getElementById("viewport-scroll").scrollTop = 0;
-      }, 120);
+        canvas.classList.remove("page-out");
+        canvas.classList.add("page-in");
+      }, 360);
     }
 
     /* VIEW 1: BALANCED 3-TILE HUB HOME */
@@ -1171,17 +1215,17 @@
 
         <!-- Balanced 3-Tile Row -->
         <div class="btn-grid-trio">
-          <button class="option-btn" onclick="showDayView('${featuredDay.id}')">
+          <button class="option-btn" onclick="navigateSmoothly(() => showDayView('${featuredDay.id}'))">
             <h3>📅 Daily Guide & Tides</h3>
             <p>View day-by-day schedules, low tide beach setup windows, and custom notes.</p>
           </button>
 
-          <button class="option-btn" onclick="showDiningDirectory()">
+          <button class="option-btn" onclick="navigateSmoothly(showDiningDirectory)">
             <h3>🍽️ Dining & Restaurants</h3>
             <p>Browse local seafood shacks, dinner reservations, menus, and directions.</p>
           </button>
 
-          <button class="option-btn" onclick="showActivityDirectory()">
+          <button class="option-btn" onclick="navigateSmoothly(showActivityDirectory)">
             <h3>🎯 Activities & Excursions</h3>
             <p>Explore beaches, shaded nature walks, Water Country, Take Flight, and cinemas.</p>
           </button>
@@ -1194,13 +1238,12 @@
           </div>
           <div style="display:flex; gap:8px;">
             <button class="btn-sm" onclick="jumpToToday()">📍 Today</button>
-            <select class="dining-select" style="font-size:0.85rem; padding:6px 12px;" onchange="showDayView(this.value)">
+            <select class="dining-select" style="font-size:0.85rem; padding:6px 12px;" onchange="navigateSmoothly(() => showDayView(this.value))">
               ${TRIP_DAYS.map(d => `<option value="${d.id}" ${d.id === featuredDay.id ? 'selected' : ''}>${d.label} — ${d.tag}</option>`).join('')}
             </select>
           </div>
         </div>
       `;
-      triggerViewTransition(canvas);
     }
 
     /* VIEW 2: DAY FOCUS VIEW */
@@ -1242,7 +1285,7 @@
           <button class="day-pill-btn" style="background:#023e8a; color:white;" onclick="jumpToToday()">📍 Today</button>
           <div class="day-scroller-track" id="scroller-track">
             ${TRIP_DAYS.map(d => `
-              <button id="pill-${d.id}" class="day-pill-btn ${d.id === currentDayId ? 'active' : ''}" onclick="showDayView('${d.id}')">
+              <button id="pill-${d.id}" class="day-pill-btn ${d.id === currentDayId ? 'active' : ''}" onclick="navigateSmoothly(() => showDayView('${d.id}'))">
                 <span>${d.label}</span>
               </button>
             `).join('')}
@@ -1317,7 +1360,7 @@
           </div>
         </div>
 
-        <!-- 2. "What's Happening Today" Card (Strict Filter: Anchors & User Pinned Only) -->
+        <!-- 2. "What's Happening Today" Card (Strict Filter: Hard Commitments Only) -->
         <div class="spotlight-card">
           <div class="spotlight-title">✨ What’s Happening Today (Locked & Selected)</div>
           <div class="spotlight-text">${day.highlightLead}</div>
@@ -1349,113 +1392,187 @@
           ` : ''}
         </div>
 
-        <!-- 3. Details Accordion 1: Schedule & Notes -->
-        <details id="acc-schedule" ontoggle="handleAccordionToggle(this)">
-          <summary>
-            <span>🕒 Schedule & Daily Focus</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tap to view timeline</span>
-          </summary>
-          <div class="details-content">
-            <div class="schedule-stack">
-              <div class="schedule-row">
-                <span class="slot-pill slot-morning">☀️ Morning</span>
-                <span style="font-weight:600; color:var(--text-dark);">
-                  ${getSlotDisplay(day.schedule.morning, customSlots.morning, diningState.breakfast) || '— Open / Flexible —'}
-                </span>
-                ${customSlots.morning ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'morning')">&times;</button>` : ''}
-              </div>
-              <div class="schedule-row">
-                <span class="slot-pill slot-afternoon">⛅ Afternoon</span>
-                <span style="font-weight:600; color:var(--text-dark);">
-                  ${getSlotDisplay(day.schedule.afternoon, customSlots.afternoon, diningState.lunch) || '— Open / Flexible —'}
-                </span>
-                ${customSlots.afternoon ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'afternoon')">&times;</button>` : ''}
-              </div>
-              <div class="schedule-row">
-                <span class="slot-pill slot-evening">🌙 Evening</span>
-                <span style="font-weight:600; color:var(--text-dark);">
-                  ${getSlotDisplay(day.schedule.evening, customSlots.evening, diningState.dinner) || '— Open / Flexible —'}
-                </span>
-                ${customSlots.evening ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'evening')">&times;</button>` : ''}
-              </div>
+        <!-- 3. Full-Card Accordion 1: Schedule & Notes -->
+        <div class="accordion-card" id="card-acc-schedule">
+          <div class="accordion-header-row" onclick="toggleAccordion('card-acc-schedule')">
+            <span class="accordion-title">🕒 Schedule & Daily Focus</span>
+            <div class="accordion-right-wrap">
+              <span class="accordion-hint">Tap to view timeline</span>
+              <span class="accordion-chevron">▾</span>
             </div>
-
-            <textarea class="dining-select" style="width:100%; min-height:54px; margin-top:12px; padding:10px; font-family:inherit;" placeholder="Notes for today (pack chairs, sunscreen, towels)..." oninput="saveNote('${day.id}', this.value)">${dailyNote}</textarea>
           </div>
-        </details>
-
-        <!-- 4. Details Accordion 2: Activities & CYOA -->
-        <details id="acc-cyoa" ontoggle="handleAccordionToggle(this)">
-          <summary>
-            <span>${day.cyoaHeader}</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">(${day.cyoa.length} options)</span>
-          </summary>
-          <div class="details-content">
-            <div class="act-list">
-              ${day.cyoa.map(item => {
-                const isPinned = pinned.includes(item.name);
-                return `
-                  <div class="act-row">
-                    <div class="act-left">
-                      <span class="act-name" onclick="${item.profileKey ? `openActivityProfile('${item.profileKey}')` : ''}">${item.name}</span>
-                      <span style="color:var(--text-muted); font-size:0.82rem;">${item.desc}</span>
-                      <div style="display:flex; gap:6px; font-size:0.7rem; color:var(--primary-dark); font-weight:700; margin-top:2px;">
-                        ${item.drive ? `<span>📍 ${item.drive}</span>` : ''}
-                        ${item.shade ? `<span>🌿 ${item.shade}</span>` : ''}
-                      </div>
-                    </div>
-                    <div style="display:flex; gap:6px;">
-                      ${item.profileKey ? `<button class="btn-sm" onclick="openActivityProfile('${item.profileKey}')">Info</button>` : ''}
-                      <button class="btn-sm ${isPinned ? 'pinned' : ''}" onclick="togglePin('${item.name.replace(/'/g, "\\'")}')">
-                        ${isPinned ? '✓ Pinned' : '+ Pin'}
-                      </button>
-                    </div>
+          <div class="accordion-slide-grid">
+            <div class="accordion-overflow-box">
+              <div class="accordion-inner-content">
+                <div class="schedule-stack">
+                  <div class="schedule-row">
+                    <span class="slot-pill slot-morning">☀️ Morning</span>
+                    <span style="font-weight:600; color:var(--text-dark);">
+                      ${getSlotDisplay(day.schedule.morning, customSlots.morning, diningState.breakfast) || '— Open / Flexible —'}
+                    </span>
+                    ${customSlots.morning ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'morning')">&times;</button>` : ''}
                   </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        </details>
+                  <div class="schedule-row">
+                    <span class="slot-pill slot-afternoon">⛅ Afternoon</span>
+                    <span style="font-weight:600; color:var(--text-dark);">
+                      ${getSlotDisplay(day.schedule.afternoon, customSlots.afternoon, diningState.lunch) || '— Open / Flexible —'}
+                    </span>
+                    ${customSlots.afternoon ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'afternoon')">&times;</button>` : ''}
+                  </div>
+                  <div class="schedule-row">
+                    <span class="slot-pill slot-evening">🌙 Evening</span>
+                    <span style="font-weight:600; color:var(--text-dark);">
+                      ${getSlotDisplay(day.schedule.evening, customSlots.evening, diningState.dinner) || '— Open / Flexible —'}
+                    </span>
+                    ${customSlots.evening ? `<button class="btn-sm" onclick="clearSlot('${day.id}', 'evening')">&times;</button>` : ''}
+                  </div>
+                </div>
 
-        <!-- 5. Details Accordion 3: Dining Choices -->
-        <details id="acc-dining" ontoggle="handleAccordionToggle(this)">
-          <summary>
-            <span>🍽️ Dining Choices</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Tap to plan meals</span>
-          </summary>
-          <div class="details-content">
-            <div class="dining-grid">
-              <div class="dining-box">
-                <strong>Breakfast</strong>
-                <select class="dining-select" onchange="saveDining('${day.id}', 'breakfast', this.value)">
-                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.breakfast === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                </select>
-              </div>
-              <div class="dining-box">
-                <strong>Lunch</strong>
-                <select class="dining-select" onchange="saveDining('${day.id}', 'lunch', this.value)">
-                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.lunch === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                </select>
-              </div>
-              <div class="dining-box">
-                <strong>Dinner</strong>
-                <select class="dining-select" onchange="saveDining('${day.id}', 'dinner', this.value)">
-                  ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.dinner === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                </select>
+                <textarea class="dining-select" style="width:100%; min-height:54px; margin-top:12px; padding:10px; font-family:inherit;" placeholder="Notes for today (pack chairs, sunscreen, towels)..." oninput="saveNote('${day.id}', this.value)">${dailyNote}</textarea>
               </div>
             </div>
           </div>
-        </details>
+        </div>
+
+        <!-- 4. Full-Card Accordion 2: Activities & CYOA -->
+        <div class="accordion-card" id="card-acc-cyoa">
+          <div class="accordion-header-row" onclick="toggleAccordion('card-acc-cyoa')">
+            <span class="accordion-title">${day.cyoaHeader}</span>
+            <div class="accordion-right-wrap">
+              <span class="accordion-hint">(${day.cyoa.length} options)</span>
+              <span class="accordion-chevron">▾</span>
+            </div>
+          </div>
+          <div class="accordion-slide-grid">
+            <div class="accordion-overflow-box">
+              <div class="accordion-inner-content">
+                <div class="act-list">
+                  ${day.cyoa.map(item => {
+                    const isPinned = pinned.includes(item.name);
+                    return `
+                      <div class="act-row">
+                        <div class="act-left">
+                          <span class="act-name" onclick="${item.profileKey ? `openActivityProfile('${item.profileKey}')` : ''}">${item.name}</span>
+                          <span style="color:var(--text-muted); font-size:0.82rem;">${item.desc}</span>
+                          <div style="display:flex; gap:6px; font-size:0.7rem; color:var(--primary-dark); font-weight:700; margin-top:2px;">
+                            ${item.drive ? `<span>📍 ${item.drive}</span>` : ''}
+                            ${item.shade ? `<span>🌿 ${item.shade}</span>` : ''}
+                          </div>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                          ${item.profileKey ? `<button class="btn-sm" onclick="openActivityProfile('${item.profileKey}')">Info</button>` : ''}
+                          <button class="btn-sm ${isPinned ? 'pinned' : ''}" onclick="togglePin('${item.name.replace(/'/g, "\\'")}')">
+                            ${isPinned ? '✓ Pinned' : '+ Pin'}
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Full-Card Accordion 3: Dining Choices -->
+        <div class="accordion-card" id="card-acc-dining">
+          <div class="accordion-header-row" onclick="toggleAccordion('card-acc-dining')">
+            <span class="accordion-title">🍽️ Dining Choices</span>
+            <div class="accordion-right-wrap">
+              <span class="accordion-hint">Tap to plan meals</span>
+              <span class="accordion-chevron">▾</span>
+            </div>
+          </div>
+          <div class="accordion-slide-grid">
+            <div class="accordion-overflow-box">
+              <div class="accordion-inner-content">
+                <div class="dining-grid">
+                  <div class="dining-box">
+                    <strong>Breakfast</strong>
+                    <select class="dining-select" onchange="saveDining('${day.id}', 'breakfast', this.value)">
+                      ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.breakfast === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="dining-box">
+                    <strong>Lunch</strong>
+                    <select class="dining-select" onchange="saveDining('${day.id}', 'lunch', this.value)">
+                      ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.lunch === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="dining-box">
+                    <strong>Dinner</strong>
+                    <select class="dining-select" onchange="saveDining('${day.id}', 'dinner', this.value)">
+                      ${diningSelectOptions.map(opt => `<option value="${opt}" ${diningState.dinner === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       `;
-
-      triggerViewTransition(canvas);
 
       setTimeout(() => {
         const activePill = document.getElementById(`pill-${day.id}`);
         if (activePill) {
           activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
-      }, 100);
+      }, 50);
+    }
+
+    /* Isolated Custom Smooth Viewport Scroll Engine */
+    function smoothScrollToExpandedBottom(card, extraHeight) {
+      const scrollContainer = document.getElementById("viewport-scroll");
+      if (!card || !scrollContainer) return;
+
+      const cardRect = card.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      
+      // Calculate true document-space bottom + 200px buffer below
+      const cardTopInDoc = (cardRect.top - containerRect.top) + scrollContainer.scrollTop;
+      const targetScrollTop = (cardTopInDoc + card.offsetHeight + extraHeight + 200) - scrollContainer.clientHeight;
+
+      const startScrollTop = scrollContainer.scrollTop;
+      const distance = targetScrollTop - startScrollTop;
+
+      if (distance <= 0) return;
+
+      const duration = 1250; // 1.25s continuous slow glide
+      const startTime = performance.now();
+
+      function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Smooth cubic deceleration
+        const ease = 1 - Math.pow(1 - progress, 3);
+
+        scrollContainer.scrollTop = startScrollTop + (distance * ease);
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    function toggleAccordion(id) {
+      const card = document.getElementById(id);
+      if (!card) return;
+      
+      const isOpening = !card.classList.contains("open");
+      card.classList.toggle("open");
+
+      if (isOpening) {
+        const innerContent = card.querySelector(".accordion-inner-content");
+        const extraHeight = innerContent ? innerContent.scrollHeight + 40 : 240;
+        
+        // Wait 160ms for accordion height to unroll before starting the gentle scroll
+        setTimeout(() => {
+          smoothScrollToExpandedBottom(card, extraHeight);
+        }, 160);
+      }
     }
 
     function getAssignedSlotName(slots, itemName) {
@@ -1463,14 +1580,6 @@
       if (slots.afternoon === itemName) return "Afternoon";
       if (slots.evening === itemName) return "Evening";
       return "Assign...";
-    }
-
-    function handleAccordionToggle(el) {
-      if (el.open) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 180);
-      }
     }
 
     function setActiveTab(tabId) {
@@ -1541,8 +1650,8 @@
       const canvas = document.getElementById("main-canvas");
       canvas.innerHTML = `
         <div class="subpage-bar">
-          <button class="back-btn" onclick="showDayView('${currentDayId}')">← Back to Daily Guide</button>
-          <button class="back-btn" onclick="showHub()">🏡 Trip Home</button>
+          <button class="back-btn" onclick="navigateSmoothly(() => showDayView('${currentDayId}'))">← Back to Daily Guide</button>
+          <button class="back-btn" onclick="navigateSmoothly(showHub)">🏡 Trip Home</button>
         </div>
 
         <div class="card">
@@ -1564,7 +1673,6 @@
           </table>
         </div>
       `;
-      triggerViewTransition(canvas);
     }
 
     function showActivityDirectory() {
@@ -1573,8 +1681,8 @@
       const canvas = document.getElementById("main-canvas");
       canvas.innerHTML = `
         <div class="subpage-bar">
-          <button class="back-btn" onclick="showDayView('${currentDayId}')">← Back to Daily Guide</button>
-          <button class="back-btn" onclick="showHub()">🏡 Trip Home</button>
+          <button class="back-btn" onclick="navigateSmoothly(() => showDayView('${currentDayId}'))">← Back to Daily Guide</button>
+          <button class="back-btn" onclick="navigateSmoothly(showHub)">🏡 Trip Home</button>
         </div>
 
         <div class="card">
@@ -1596,7 +1704,6 @@
           </table>
         </div>
       `;
-      triggerViewTransition(canvas);
     }
 
     function openProvisioningModal() {
